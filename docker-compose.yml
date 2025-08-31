@@ -1,0 +1,172 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: climacool-postgres
+    environment:
+      POSTGRES_DB: climacool
+      POSTGRES_USER: climacool_user
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - climacool-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U climacool_user -d climacool"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: climacool-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - climacool-network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ Message Queue
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: climacool-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-admin}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-changeme}
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - climacool-network
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # OpenSearch (Elasticsearch alternative)
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: climacool-opensearch
+    environment:
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - DISABLE_SECURITY_PLUGIN=true
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    networks:
+      - climacool-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # OpenSearch Dashboards (Kibana alternative)
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.0
+    container_name: climacool-opensearch-dashboards
+    ports:
+      - "5601:5601"
+    environment:
+      OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
+    networks:
+      - climacool-network
+    depends_on:
+      - opensearch
+
+  # MinIO (S3-compatible storage)
+  minio:
+    image: minio/minio:latest
+    container_name: climacool-minio
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-changeme123}
+    ports:
+      - "9000:9000"   # API port
+      - "9001:9001"   # Console port
+    volumes:
+      - minio-data:/data
+    networks:
+      - climacool-network
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # Backend API (will be built later)
+  # api:
+  #   build:
+  #     context: ./src/backend
+  #     dockerfile: Dockerfile
+  #   container_name: climacool-api
+  #   environment:
+  #     - ASPNETCORE_ENVIRONMENT=Development
+  #     - ConnectionStrings__DefaultConnection=Host=postgres;Database=climacool;Username=climacool_user;Password=${POSTGRES_PASSWORD:-changeme}
+  #     - ConnectionStrings__Redis=redis:6379
+  #     - RabbitMQ__Host=rabbitmq
+  #     - OpenSearch__Url=http://opensearch:9200
+  #     - MinIO__Endpoint=minio:9000
+  #   ports:
+  #     - "5000:8080"
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - rabbitmq
+  #     - opensearch
+  #     - minio
+  #   networks:
+  #     - climacool-network
+
+  # Frontend Customer Portal (will be built later)
+  # customer-portal:
+  #   build:
+  #     context: ./src/frontend/customer-portal
+  #     dockerfile: Dockerfile
+  #   container_name: climacool-customer-portal
+  #   ports:
+  #     - "4200:80"
+  #   networks:
+  #     - climacool-network
+
+  # Frontend Admin Portal (will be built later)
+  # admin-portal:
+  #   build:
+  #     context: ./src/frontend/admin-portal
+  #     dockerfile: Dockerfile
+  #   container_name: climacool-admin-portal
+  #   ports:
+  #     - "4201:80"
+  #   networks:
+  #     - climacool-network
+
+networks:
+  climacool-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:
+  rabbitmq-data:
+  opensearch-data:
+  minio-data:
