@@ -5,8 +5,6 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClimaCool.API", "ClimaCool.API\ClimaCool.API.csproj", "{DC8BF768-F19F-40DD-9039-4120983B46D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClimaCool.Core", "ClimaCool.Core\ClimaCool.Core.csproj", "{C83DDD0E-F276-49BC-B03D-7310BCD9C9C5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClimaCool.Domain", "ClimaCool.Domain\ClimaCool.Domain.csproj", "{8C374D94-C9DC-414B-B0EF-9A676F9155E5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClimaCool.Application", "ClimaCool.Application\ClimaCool.Application.csproj", "{0049B192-8ED2-4F70-A49A-F4B661ACF3C1}"
@@ -28,10 +26,6 @@ Global
 		{DC8BF768-F19F-40DD-9039-4120983B46D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DC8BF768-F19F-40DD-9039-4120983B46D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DC8BF768-F19F-40DD-9039-4120983B46D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C83DDD0E-F276-49BC-B03D-7310BCD9C9C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C83DDD0E-F276-49BC-B03D-7310BCD9C9C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C83DDD0E-F276-49BC-B03D-7310BCD9C9C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C83DDD0E-F276-49BC-B03D-7310BCD9C9C5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C374D94-C9DC-414B-B0EF-9A676F9155E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C374D94-C9DC-414B-B0EF-9A676F9155E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C374D94-C9DC-414B-B0EF-9A676F9155E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
