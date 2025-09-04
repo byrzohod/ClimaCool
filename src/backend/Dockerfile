@@ -5,11 +5,11 @@ WORKDIR /src
 # Copy solution and project files
 COPY ClimaCool.sln ./
 COPY ClimaCool.API/*.csproj ./ClimaCool.API/
-COPY ClimaCool.Core/*.csproj ./ClimaCool.Core/
 COPY ClimaCool.Domain/*.csproj ./ClimaCool.Domain/
 COPY ClimaCool.Application/*.csproj ./ClimaCool.Application/
 COPY ClimaCool.Infrastructure/*.csproj ./ClimaCool.Infrastructure/
 COPY ClimaCool.Tests/*.csproj ./ClimaCool.Tests/
+COPY ClimaCool.Tests.Integration/*.csproj ./ClimaCool.Tests.Integration/
 
 # Restore dependencies
 RUN dotnet restore
