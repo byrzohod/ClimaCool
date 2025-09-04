@@ -93,4 +93,8 @@ export class VerifyEmailComponent implements OnInit, OnDestroy {
         }
       });
   }
+
+  get isAuthenticated(): boolean {
+    return this.authService.isAuthenticated();
+  }
 }
