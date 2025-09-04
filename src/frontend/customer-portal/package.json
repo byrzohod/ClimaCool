@@ -6,7 +6,8 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "lint": "echo 'Linting temporarily disabled - will be configured with ESLint'"
   },
   "prettier": {
     "printWidth": 100,
