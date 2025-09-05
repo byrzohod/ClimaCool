@@ -17,15 +17,18 @@ namespace ClimaCool.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
         private readonly ILogger<ProductService> _logger;
 
         public ProductService(
             IUnitOfWork unitOfWork,
             IProductRepository productRepository,
+            IMapper mapper,
             ILogger<ProductService> logger)
         {
             _unitOfWork = unitOfWork;
             _productRepository = productRepository;
+            _mapper = mapper;
             _logger = logger;
         }
 
