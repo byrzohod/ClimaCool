@@ -8,7 +8,7 @@
 | User Registration & Auth | ✅ Completed | Critical | - | #2, #3 | JWT auth with refresh tokens |
 | Product Catalog | ✅ Completed | Critical | - | #4 | Backend + Frontend with categories |
 | Product Search & Filtering | 🔴 Not Started | Critical | - | - | Requires Elasticsearch |
-| Shopping Cart | 🟡 In Progress | Critical | - | #5 | Backend complete, Frontend partial |
+| Shopping Cart | 🟡 In Progress | Critical | - | #5 | Backend complete, UI incomplete |
 | Basic Checkout | 🔴 Not Started | Critical | - | - | Needs cart complete |
 | Order Management | 🔴 Not Started | Critical | - | - | After checkout |
 | Admin Product Management | 🔴 Not Started | Critical | - | - | Admin dashboard |

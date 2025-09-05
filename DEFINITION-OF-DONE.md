@@ -5,11 +5,14 @@ This document defines the criteria that must be met before any feature can be co
 
 **IMPORTANT: A feature is ONLY considered complete when it includes:**
 - ✅ Complete backend implementation with all APIs
-- ✅ Complete frontend implementation with all UI components
-- ✅ Comprehensive testing (unit, integration, E2E)
+- ✅ Complete frontend implementation with fully functional UI components
+- ✅ Complete user journey from UI to backend and back
+- ✅ Comprehensive testing (unit, integration, E2E UI tests)
 - ✅ Full documentation
 - ✅ All success criteria met
 - ✅ All CI/CD checks passing
+
+**NO FEATURE IS COMPLETE WITHOUT WORKING UI - Backend-only implementations are NOT acceptable.**
 
 ## Full-Stack Feature Requirements
 
@@ -109,12 +112,14 @@ This document defines the criteria that must be met before any feature can be co
 - [ ] Authentication/authorization tested
 
 ### End-to-End Tests
-- [ ] Critical user journeys tested
-- [ ] Cross-browser compatibility verified
-- [ ] Mobile responsiveness tested
-- [ ] Form validations tested
-- [ ] Error states tested
-- [ ] Loading states tested
+- [ ] **Complete user journeys tested end-to-end (UI → API → Database → UI)**
+- [ ] All major user workflows automated with E2E tests
+- [ ] Cross-browser compatibility verified (Chrome, Firefox, Safari)
+- [ ] Mobile responsiveness tested on different screen sizes
+- [ ] Form validations tested in real browser environment
+- [ ] Error states and error handling tested
+- [ ] Loading states and async operations tested
+- [ ] Authentication flows tested end-to-end
 
 ### Functional Tests
 - [ ] All acceptance criteria met
@@ -211,7 +216,8 @@ This document defines the criteria that must be met before any feature can be co
 - [ ] Performance impact assessed
 - [ ] Security impact assessed
 - [ ] Backward compatibility maintained
-- [ ] **FEATURE-TRACKING.md updated with current status**
+- [ ] **FEATURE-TRACKING.md updated with current feature status and completion**
+- [ ] **Feature marked as complete in tracking file only when UI + Backend + Tests are ALL done**
 
 ### Merge to Main Branch
 - [ ] **Pull Request created with detailed description**
