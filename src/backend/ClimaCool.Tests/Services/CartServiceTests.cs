@@ -178,7 +178,7 @@ namespace ClimaCool.Tests.Services
             // Assert
             Assert.NotNull(result);
             Assert.Equal(expectedDto.Id, result.Id);
-            _mockUnitOfWork.Verify(u => u.CompleteAsync(), Times.Exactly(2)); // Once for create/get, once for add
+            _mockUnitOfWork.Verify(u => u.CompleteAsync(), Times.Once); // Only once for add since cart already exists
         }
 
         [Fact]
