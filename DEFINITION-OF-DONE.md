@@ -212,6 +212,13 @@ This document defines the criteria that must be met before any feature can be co
 - [ ] Security impact assessed
 - [ ] Backward compatibility maintained
 
+### Merge to Main Branch
+- [ ] **Pull Request created with detailed description**
+- [ ] **All CI/CD checks passing (required)**
+- [ ] **Code review approved (if applicable)**
+- [ ] **PR merged to main branch**
+- [ ] **Feature is ONLY considered complete after successful merge to main**
+
 ### Post-Merge Activities
 - [ ] Feature branch deleted after merge
 - [ ] Deployment to staging successful
