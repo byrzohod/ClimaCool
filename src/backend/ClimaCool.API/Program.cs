@@ -117,6 +117,9 @@ builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Configure AutoMapper
+builder.Services.AddAutoMapper(typeof(ProductMappingProfile).Assembly);
+
 // Register Services
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
@@ -124,9 +127,7 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-
-// TODO: Add AutoMapper configuration
-// For now, services will need to handle mapping manually
+builder.Services.AddScoped<ICartService, CartService>();
 
 // Add CORS
 builder.Services.AddCors(options =>

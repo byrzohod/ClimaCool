@@ -24,6 +24,10 @@ public class ApplicationDbContext : DbContext
     public DbSet<ProductVariantAttribute> ProductVariantAttributes { get; set; }
     public DbSet<ProductReview> ProductReviews { get; set; }
     
+    // Shopping Cart
+    public DbSet<Cart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -242,6 +246,46 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
+        });
+        
+        // Cart entity configuration
+        modelBuilder.Entity<Cart>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.SessionId);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.ExpiresAt);
+            entity.Property(e => e.SessionId).IsRequired().HasMaxLength(100);
+            // UserId is a nullable Guid, no max length needed
+            
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+        
+        // CartItem entity configuration
+        modelBuilder.Entity<CartItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => new { e.CartId, e.ProductId });
+            entity.Property(e => e.Price).HasPrecision(18, 2);
+            entity.Property(e => e.VariantOptions).HasMaxLength(500);
+            
+            entity.HasOne(e => e.Cart)
+                .WithMany(c => c.Items)
+                .HasForeignKey(e => e.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            entity.HasOne(e => e.ProductVariant)
+                .WithMany()
+                .HasForeignKey(e => e.ProductVariantId)
+                .OnDelete(DeleteBehavior.SetNull);
         });
         
         // Apply global conventions
