@@ -15,6 +15,15 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     
+    // Product Catalog
+    public DbSet<Product> Products { get; set; }
+    public DbSet<Category> Categories { get; set; }
+    public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<ProductVariant> ProductVariants { get; set; }
+    public DbSet<ProductAttribute> ProductAttributes { get; set; }
+    public DbSet<ProductVariantAttribute> ProductVariantAttributes { get; set; }
+    public DbSet<ProductReview> ProductReviews { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -101,6 +110,140 @@ public class ApplicationDbContext : DbContext
                 .OnDelete(DeleteBehavior.Cascade);
         });
         
+        // Category entity configuration
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Slug).IsUnique();
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Slug).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Description).HasMaxLength(1000);
+            entity.Property(e => e.ImageUrl).HasMaxLength(500);
+            entity.Property(e => e.MetaTitle).HasMaxLength(255);
+            entity.Property(e => e.MetaDescription).HasMaxLength(500);
+            entity.Property(e => e.MetaKeywords).HasMaxLength(255);
+            
+            // Self-referencing relationship for parent/child categories
+            entity.HasOne(e => e.ParentCategory)
+                .WithMany(e => e.ChildCategories)
+                .HasForeignKey(e => e.ParentCategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+        
+        // Product entity configuration
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.Slug).IsUnique();
+            entity.HasIndex(e => e.SKU).IsUnique();
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Slug).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.SKU).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Description).HasMaxLength(2000);
+            entity.Property(e => e.ShortDescription).HasMaxLength(500);
+            entity.Property(e => e.Barcode).HasMaxLength(50);
+            entity.Property(e => e.Brand).HasMaxLength(100);
+            entity.Property(e => e.Model).HasMaxLength(100);
+            entity.Property(e => e.MetaTitle).HasMaxLength(255);
+            entity.Property(e => e.MetaDescription).HasMaxLength(500);
+            entity.Property(e => e.MetaKeywords).HasMaxLength(255);
+            
+            // Decimal properties
+            entity.Property(e => e.Price).HasPrecision(18, 2);
+            entity.Property(e => e.CompareAtPrice).HasPrecision(18, 2);
+            entity.Property(e => e.CostPrice).HasPrecision(18, 2);
+            entity.Property(e => e.Weight).HasPrecision(8, 3);
+            entity.Property(e => e.Length).HasPrecision(8, 3);
+            entity.Property(e => e.Width).HasPrecision(8, 3);
+            entity.Property(e => e.Height).HasPrecision(8, 3);
+            
+            // Foreign key to Category
+            entity.HasOne(e => e.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(e => e.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            // Query filter for soft delete
+            entity.HasQueryFilter(e => !e.IsDeleted);
+        });
+        
+        // ProductImage entity configuration
+        modelBuilder.Entity<ProductImage>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.ImageUrl).IsRequired().HasMaxLength(500);
+            entity.Property(e => e.ThumbnailUrl).HasMaxLength(500);
+            entity.Property(e => e.AltText).HasMaxLength(255);
+            
+            entity.HasOne(e => e.Product)
+                .WithMany(p => p.Images)
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        
+        // ProductVariant entity configuration
+        modelBuilder.Entity<ProductVariant>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.SKU).IsUnique();
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.SKU).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.ImageUrl).HasMaxLength(500);
+            entity.Property(e => e.Price).HasPrecision(18, 2);
+            entity.Property(e => e.CompareAtPrice).HasPrecision(18, 2);
+            
+            entity.HasOne(e => e.Product)
+                .WithMany(p => p.Variants)
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        
+        // ProductAttribute entity configuration
+        modelBuilder.Entity<ProductAttribute>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Value).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.Unit).HasMaxLength(50);
+            
+            entity.HasOne(e => e.Product)
+                .WithMany(p => p.Attributes)
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        
+        // ProductVariantAttribute entity configuration
+        modelBuilder.Entity<ProductVariantAttribute>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Value).IsRequired().HasMaxLength(255);
+            
+            entity.HasOne(e => e.ProductVariant)
+                .WithMany(v => v.Attributes)
+                .HasForeignKey(e => e.ProductVariantId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+        
+        // ProductReview entity configuration
+        modelBuilder.Entity<ProductReview>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).HasMaxLength(255);
+            entity.Property(e => e.Comment).HasMaxLength(2000);
+            entity.Property(e => e.Rating).IsRequired();
+            
+            entity.HasOne(e => e.Product)
+                .WithMany(p => p.Reviews)
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+        
         // Apply global conventions
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
         {
@@ -131,11 +274,11 @@ public class ApplicationDbContext : DbContext
     
     private void UpdateAuditFields()
     {
-        var entries = ChangeTracker
+        var baseEntityEntries = ChangeTracker
             .Entries()
             .Where(e => e.Entity is BaseEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
         
-        foreach (var entry in entries)
+        foreach (var entry in baseEntityEntries)
         {
             var entity = (BaseEntity)entry.Entity;
             
@@ -143,6 +286,22 @@ public class ApplicationDbContext : DbContext
             {
                 entity.CreatedAt = DateTime.UtcNow;
                 entity.Id = entity.Id == Guid.Empty ? Guid.NewGuid() : entity.Id;
+            }
+            
+            entity.UpdatedAt = DateTime.UtcNow;
+        }
+        
+        var catalogBaseEntityEntries = ChangeTracker
+            .Entries()
+            .Where(e => e.Entity is CatalogBaseEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
+        
+        foreach (var entry in catalogBaseEntityEntries)
+        {
+            var entity = (CatalogBaseEntity)entry.Entity;
+            
+            if (entry.State == EntityState.Added)
+            {
+                entity.CreatedAt = DateTime.UtcNow;
             }
             
             entity.UpdatedAt = DateTime.UtcNow;
