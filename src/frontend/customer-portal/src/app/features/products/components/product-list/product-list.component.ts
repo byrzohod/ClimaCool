@@ -24,6 +24,9 @@ import * as CategorySelectors from '../../store/category.selectors';
 })
 export class ProductListComponent implements OnInit, OnDestroy {
   private readonly destroy$ = new Subject<void>();
+  
+  // Make Math available in template
+  Math = Math;
 
   // Observable data
   products$: Observable<ProductListItem[]>;

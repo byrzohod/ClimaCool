@@ -6,7 +6,7 @@ using AutoMapper;
 using ClimaCool.Application.DTOs.Category;
 using ClimaCool.Domain.Entities;
 using ClimaCool.Domain.Interfaces;
-using ClimaCool.Infrastructure.Extensions;
+using ClimaCool.Application.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace ClimaCool.Application.Services
