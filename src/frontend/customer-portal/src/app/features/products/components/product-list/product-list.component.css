@@ -1,0 +1,34 @@
+/* Line clamp utility classes for text truncation */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Aspect ratio utility for consistent image sizing */
+.aspect-w-4 {
+  position: relative;
+  width: 100%;
+}
+
+.aspect-w-4::before {
+  content: '';
+  display: block;
+  padding-top: 75%; /* 4:3 aspect ratio */
+}
+
+.aspect-h-3 img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

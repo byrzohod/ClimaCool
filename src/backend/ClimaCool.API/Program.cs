@@ -6,10 +6,12 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using AutoMapper;
 using ClimaCool.Application.DTOs.Auth;
 using ClimaCool.Application.Interfaces;
 using ClimaCool.Application.Services;
 using ClimaCool.Application.Validators;
+using ClimaCool.Application.Mappings;
 using ClimaCool.Domain.Entities;
 using ClimaCool.Domain.Interfaces;
 using ClimaCool.Infrastructure.Data;
@@ -109,7 +111,10 @@ builder.Services.AddScoped<IValidator<ForgotPasswordRequestDto>, ForgotPasswordR
 
 // Register Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped(typeof(ICatalogRepository<>), typeof(CatalogRepository<>));
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Register Services
@@ -117,6 +122,11 @@ builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+// TODO: Add AutoMapper configuration
+// For now, services will need to handle mapping manually
 
 // Add CORS
 builder.Services.AddCors(options =>

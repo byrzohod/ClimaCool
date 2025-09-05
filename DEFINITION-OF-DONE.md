@@ -3,6 +3,37 @@
 ## Overview
 This document defines the criteria that must be met before any feature can be considered complete and ready for production. Every feature implementation must satisfy ALL criteria listed below without exception.
 
+**IMPORTANT: A feature is ONLY considered complete when it includes:**
+- ✅ Complete backend implementation with all APIs
+- ✅ Complete frontend implementation with all UI components
+- ✅ Comprehensive testing (unit, integration, E2E)
+- ✅ Full documentation
+- ✅ All success criteria met
+- ✅ All CI/CD checks passing
+
+## Full-Stack Feature Requirements
+
+### Backend Implementation
+- [ ] All domain entities created
+- [ ] DTOs and validators implemented
+- [ ] Repository and service layers complete
+- [ ] All API endpoints functional
+- [ ] Database migrations applied
+- [ ] Unit tests with ≥80% coverage
+- [ ] Integration tests for all endpoints
+- [ ] API documentation in Swagger
+
+### Frontend Implementation
+- [ ] All components created with Tailwind CSS
+- [ ] Services and models implemented
+- [ ] State management configured
+- [ ] Routing configured
+- [ ] Forms with validation
+- [ ] Error handling and loading states
+- [ ] Responsive design (mobile, tablet, desktop)
+- [ ] Unit tests for components and services
+- [ ] E2E tests for user journeys
+
 ## Branch Strategy
 - [ ] Feature implemented in a dedicated feature branch (`feature/<feature-name>`)
 - [ ] Branch created from latest `main` branch
