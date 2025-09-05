@@ -11,6 +11,7 @@ public class UnitOfWork : IUnitOfWork
     private IUserRepository? _userRepository;
     private IRepository<Role>? _roleRepository;
     private IRepository<RefreshToken>? _refreshTokenRepository;
+    private ICartRepository? _cartRepository;
     private IDbContextTransaction? _transaction;
 
     public UnitOfWork(ApplicationDbContext context)
@@ -21,6 +22,7 @@ public class UnitOfWork : IUnitOfWork
     public IUserRepository Users => _userRepository ??= new UserRepository(_context);
     public IRepository<Role> Roles => _roleRepository ??= new Repository<Role>(_context);
     public IRepository<RefreshToken> RefreshTokens => _refreshTokenRepository ??= new Repository<RefreshToken>(_context);
+    public ICartRepository Carts => _cartRepository ??= new CartRepository(_context);
 
     public async Task<int> CompleteAsync()
     {
