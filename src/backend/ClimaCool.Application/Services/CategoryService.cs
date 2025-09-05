@@ -187,7 +187,7 @@ namespace ClimaCool.Application.Services
             var category = await _categoryRepository.GetByIdAsync(id);
             if (category == null) return false;
 
-            await _categoryRepository.DeleteAsync(id);
+            await _categoryRepository.DeleteAsync(category);
             await _unitOfWork.CompleteAsync();
             
             _logger.LogInformation("Category {CategoryId} deleted", id);
