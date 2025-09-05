@@ -211,6 +211,7 @@ This document defines the criteria that must be met before any feature can be co
 - [ ] Performance impact assessed
 - [ ] Security impact assessed
 - [ ] Backward compatibility maintained
+- [ ] **FEATURE-TRACKING.md updated with current status**
 
 ### Merge to Main Branch
 - [ ] **Pull Request created with detailed description**

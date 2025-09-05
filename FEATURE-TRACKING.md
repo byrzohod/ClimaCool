@@ -5,8 +5,8 @@
 ### Phase 1: MVP (Months 1-3)
 | Feature | Status | Priority | Assigned | PR # | Notes |
 |---------|--------|----------|----------|------|-------|
-| User Registration & Auth | 🔴 Not Started | Critical | - | - | First priority |
-| Product Catalog | 🔴 Not Started | Critical | - | - | Depends on auth |
+| User Registration & Auth | ✅ Completed | Critical | - | #2, #3 | JWT auth with refresh tokens |
+| Product Catalog | ✅ Completed | Critical | - | #4 | Backend + Frontend with categories |
 | Product Search & Filtering | 🔴 Not Started | Critical | - | - | Requires Elasticsearch |
 | Shopping Cart | 🔴 Not Started | Critical | - | - | Session + persistent |
 | Basic Checkout | 🔴 Not Started | Critical | - | - | Needs cart complete |
