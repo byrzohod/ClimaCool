@@ -182,11 +182,11 @@
                   {{ product.inStock ? 'In Stock' : 'Out of Stock' }}
                 </span>
                 
-                <button 
-                  [disabled]="!product.inStock"
-                  class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500">
-                  Add to Cart
-                </button>
+                <app-add-to-cart
+                  [product]="convertToProduct(product)"
+                  [showQuantitySelector]="false"
+                  size="sm">
+                </app-add-to-cart>
               </div>
             </div>
           </ng-container>
@@ -240,11 +240,11 @@
             
             <!-- Action Button -->
             <div class="flex-shrink-0">
-              <button 
-                [disabled]="!product.inStock"
-                class="px-4 py-2 bg-blue-600 text-white text-sm rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500">
-                Add to Cart
-              </button>
+              <app-add-to-cart
+                [product]="convertToProduct(product)"
+                [showQuantitySelector]="false"
+                size="sm">
+              </app-add-to-cart>
             </div>
           </ng-container>
         </div>

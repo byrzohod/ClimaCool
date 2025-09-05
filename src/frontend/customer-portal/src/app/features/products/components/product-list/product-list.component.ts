@@ -6,8 +6,9 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
-import { ProductListItem, ProductFilters } from '../../../../core/models/product.model';
+import { ProductListItem, ProductFilters, Product } from '../../../../core/models/product.model';
 import { Category } from '../../../../core/models/category.model';
+import { AddToCartComponent } from '../../../cart/components/add-to-cart/add-to-cart.component';
 
 import * as ProductActions from '../../store/product.actions';
 import * as CategoryActions from '../../store/category.actions';
@@ -17,7 +18,7 @@ import * as CategorySelectors from '../../store/category.selectors';
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, AddToCartComponent],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -144,5 +145,33 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   trackByProduct(index: number, product: ProductListItem): number {
     return product.id;
+  }
+
+  convertToProduct(listItem: ProductListItem): Product {
+    return {
+      id: listItem.id,
+      name: listItem.name,
+      slug: listItem.slug,
+      shortDescription: listItem.shortDescription,
+      price: listItem.price,
+      compareAtPrice: listItem.compareAtPrice,
+      brand: listItem.brand,
+      primaryImageUrl: listItem.primaryImageUrl,
+      inStock: listItem.inStock,
+      isFeatured: listItem.isFeatured,
+      averageRating: listItem.averageRating,
+      reviewCount: listItem.reviewCount,
+      stockQuantity: listItem.inStock ? 10 : 0, // Estimate stock for cart component
+      // Required fields for Product interface (using defaults)
+      sku: '',
+      categoryId: 0,
+      categoryName: '',
+      productType: 0 as any,
+      isActive: true,
+      images: [],
+      variants: [],
+      attributes: [],
+      createdAt: ''
+    };
   }
 }
