@@ -1,0 +1,38 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Smart AC Unit",
+      "description": "Energy-efficient smart air conditioner with WiFi control",
+      "price": 2499.99,
+      "stockQuantity": 10,
+      "categoryId": 1,
+      "categoryName": "Air Conditioners",
+      "imageUrl": "/assets/images/ac-unit.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Heat Pump System",
+      "description": "Dual-mode heating and cooling system",
+      "price": 3999.99,
+      "stockQuantity": 5,
+      "categoryId": 2,
+      "categoryName": "Heat Pumps",
+      "imageUrl": "/assets/images/heat-pump.jpg"
+    },
+    {
+      "id": 3,
+      "name": "HEPA Air Filter",
+      "description": "Medical-grade air filtration system",
+      "price": 599.99,
+      "stockQuantity": 0,
+      "categoryId": 3,
+      "categoryName": "Air Filters",
+      "imageUrl": "/assets/images/air-filter.jpg"
+    }
+  ],
+  "totalCount": 3,
+  "pageNumber": 1,
+  "pageSize": 10,
+  "totalPages": 1
+}

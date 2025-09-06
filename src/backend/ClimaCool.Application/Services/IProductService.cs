@@ -14,7 +14,9 @@ namespace ClimaCool.Application.Services
             int? categoryId = null,
             decimal? minPrice = null,
             decimal? maxPrice = null,
-            string? sortBy = null);
+            string? sortBy = null,
+            bool? inStockOnly = null,
+            bool? featuredOnly = null);
         
         Task<ProductDto?> GetProductByIdAsync(int id);
         Task<ProductDto?> GetProductBySlugAsync(string slug);
@@ -22,6 +24,7 @@ namespace ClimaCool.Application.Services
         Task<IEnumerable<ProductListDto>> GetProductsByCategoryAsync(int categoryId);
         Task<IEnumerable<ProductListDto>> GetRelatedProductsAsync(int productId, int count = 6);
         Task<IEnumerable<ProductListDto>> GetLowStockProductsAsync();
+        Task<IEnumerable<string>> GetSearchSuggestionsAsync(string query, int maxSuggestions = 10);
         Task<ProductDto> CreateProductAsync(CreateProductDto dto);
         Task<ProductDto> UpdateProductAsync(UpdateProductDto dto);
         Task<bool> DeleteProductAsync(int id);
