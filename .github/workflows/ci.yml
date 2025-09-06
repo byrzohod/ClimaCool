@@ -151,6 +151,9 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
     
+    - name: Install EF Core Tools
+      run: dotnet tool install --global dotnet-ef
+    
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -167,16 +170,18 @@ jobs:
       working-directory: ./src/backend
     
     - name: Run database migrations
-      run: dotnet ef database update
+      run: |
+        export PATH="$PATH:$HOME/.dotnet/tools"
+        dotnet ef database update --project ../ClimaCool.Infrastructure
       working-directory: ./src/backend/ClimaCool.API
       env:
         ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=climacool_test;Username=test_user;Password=test_password"
-      continue-on-error: true
     
     - name: Start backend API
       run: |
         dotnet run --no-build --configuration Release &
-        sleep 10
+        sleep 15
+        curl -f http://localhost:5000/health || echo "Backend health check failed"
       working-directory: ./src/backend/ClimaCool.API
       env:
         ASPNETCORE_URLS: "http://localhost:5000"
