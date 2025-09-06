@@ -36,6 +36,11 @@ export const selectProductsPageInfo = createSelector(
   })
 );
 
+export const selectProductsPagedResult = createSelector(
+  selectProducts,
+  (products) => products
+);
+
 // Selected Product Selectors
 export const selectSelectedProduct = createSelector(
   selectProductState,

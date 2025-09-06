@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, RouterOutlet } from '@angular/router';
+import { RouterModule, RouterOutlet, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { CartIconComponent } from '../../../features/cart/components/cart-icon/cart-icon.component';
 import { CartSidebarComponent } from '../../../features/cart/components/cart-sidebar/cart-sidebar.component';
+import { SearchInputComponent } from '../../../shared/components/search/search-input.component';
 
 @Component({
   selector: 'app-main-layout',
@@ -14,7 +15,8 @@ import { CartSidebarComponent } from '../../../features/cart/components/cart-sid
     RouterModule, 
     RouterOutlet,
     CartIconComponent,
-    CartSidebarComponent
+    CartSidebarComponent,
+    SearchInputComponent
   ],
   template: `
     <!-- Header -->
@@ -63,8 +65,19 @@ import { CartSidebarComponent } from '../../../features/cart/components/cart-sid
           <!-- Right Side Actions -->
           <div class="flex items-center space-x-4">
             
-            <!-- Search (placeholder) -->
-            <button class="text-gray-500 hover:text-gray-700 p-2 transition-colors" title="Search">
+            <!-- Search -->
+            <div class="hidden md:block w-64">
+              <app-search-input 
+                (searchChanged)="onHeaderSearch($event)"
+                placeholder="Quick search...">
+              </app-search-input>
+            </div>
+            
+            <!-- Mobile search button -->
+            <button 
+              class="md:hidden text-gray-500 hover:text-gray-700 p-2 transition-colors" 
+              (click)="toggleMobileSearch()"
+              title="Search">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
@@ -118,6 +131,19 @@ import { CartSidebarComponent } from '../../../features/cart/components/cart-sid
                class="text-gray-700 hover:text-blue-600 px-3 py-2 text-sm font-medium">
               Contact
             </a>
+          </div>
+        </div>
+
+        <!-- Mobile Search -->
+        <div 
+          *ngIf="mobileSearchOpen"
+          class="md:hidden border-t border-gray-200 py-4"
+          data-testid="mobile-search">
+          <div class="px-3">
+            <app-search-input 
+              (searchChanged)="onHeaderSearch($event)"
+              placeholder="Search products, brands, categories...">
+            </app-search-input>
           </div>
         </div>
       </div>
@@ -203,15 +229,35 @@ import { CartSidebarComponent } from '../../../features/cart/components/cart-sid
 })
 export class MainLayoutComponent {
   mobileMenuOpen = false;
+  mobileSearchOpen = false;
   currentYear = new Date().getFullYear();
 
-  constructor(private store: Store) {}
+  constructor(
+    private store: Store,
+    private router: Router
+  ) {}
 
   toggleMobileMenu(): void {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+    this.mobileSearchOpen = false; // Close search when menu opens
   }
 
   closeMobileMenu(): void {
     this.mobileMenuOpen = false;
+  }
+
+  toggleMobileSearch(): void {
+    this.mobileSearchOpen = !this.mobileSearchOpen;
+    this.mobileMenuOpen = false; // Close menu when search opens
+  }
+
+  onHeaderSearch(searchTerm: string): void {
+    // Navigate to products page with search term
+    this.router.navigate(['/products'], { 
+      queryParams: searchTerm ? { search: searchTerm } : {} 
+    });
+    
+    // Close mobile search after navigation
+    this.mobileSearchOpen = false;
   }
 }

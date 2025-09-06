@@ -39,12 +39,14 @@ namespace ClimaCool.API.Controllers
             [FromQuery] int? categoryId = null,
             [FromQuery] decimal? minPrice = null,
             [FromQuery] decimal? maxPrice = null,
-            [FromQuery] string? sortBy = null)
+            [FromQuery] string? sortBy = null,
+            [FromQuery] bool? inStockOnly = null,
+            [FromQuery] bool? featuredOnly = null)
         {
             try
             {
                 var result = await _productService.GetProductsAsync(
-                    pageIndex, pageSize, search, categoryId, minPrice, maxPrice, sortBy);
+                    pageIndex, pageSize, search, categoryId, minPrice, maxPrice, sortBy, inStockOnly, featuredOnly);
                 return Ok(result);
             }
             catch (Exception ex)
@@ -117,6 +119,26 @@ namespace ClimaCool.API.Controllers
             {
                 _logger.LogError(ex, "Error getting products for category {CategoryId}", categoryId);
                 return StatusCode(500, new { message = "An error occurred while retrieving products" });
+            }
+        }
+
+        [HttpGet("search/suggestions")]
+        public async Task<IActionResult> GetSearchSuggestions([FromQuery] string query, [FromQuery] int maxSuggestions = 10)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+            {
+                return BadRequest(new { message = "Query parameter is required" });
+            }
+
+            try
+            {
+                var suggestions = await _productService.GetSearchSuggestionsAsync(query, maxSuggestions);
+                return Ok(new { suggestions });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting search suggestions for query: {Query}", query);
+                return StatusCode(500, new { message = "An error occurred while getting suggestions" });
             }
         }
 

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Product, ProductListItem, ProductFilters, PagedResult } from '../models/product.model';
+import { Product, ProductListItem, ProductFilters, PagedResult, SearchResult } from '../models/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class ProductService {
     let params = new HttpParams();
     
     if (filters.searchTerm) {
-      params = params.set('searchTerm', filters.searchTerm);
+      params = params.set('search', filters.searchTerm);
     }
     if (filters.categoryId) {
       params = params.set('categoryId', filters.categoryId.toString());
@@ -35,6 +35,12 @@ export class ProductService {
     }
     if (filters.pageSize) {
       params = params.set('pageSize', filters.pageSize.toString());
+    }
+    if (filters.inStockOnly !== undefined) {
+      params = params.set('inStockOnly', filters.inStockOnly.toString());
+    }
+    if (filters.featuredOnly !== undefined) {
+      params = params.set('featuredOnly', filters.featuredOnly.toString());
     }
 
     return this.http.get<PagedResult<ProductListItem>>(this.apiUrl, { params });
@@ -60,5 +66,12 @@ export class ProductService {
   getRelatedProducts(productId: number, count: number = 6): Observable<ProductListItem[]> {
     const params = new HttpParams().set('count', count.toString());
     return this.http.get<ProductListItem[]>(`${this.apiUrl}/${productId}/related`, { params });
+  }
+
+  getSearchSuggestions(query: string, maxSuggestions: number = 10): Observable<SearchResult> {
+    const params = new HttpParams()
+      .set('query', query)
+      .set('maxSuggestions', maxSuggestions.toString());
+    return this.http.get<SearchResult>(`${this.apiUrl}/search/suggestions`, { params });
   }
 }

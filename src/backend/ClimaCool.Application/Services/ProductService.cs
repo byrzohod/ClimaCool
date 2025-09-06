@@ -17,6 +17,7 @@ namespace ClimaCool.Application.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IProductRepository _productRepository;
+        // TODO: Add back ISearchService when OpenSearch integration is complete
         private readonly IMapper _mapper;
         private readonly ILogger<ProductService> _logger;
 
@@ -39,7 +40,9 @@ namespace ClimaCool.Application.Services
             int? categoryId = null,
             decimal? minPrice = null,
             decimal? maxPrice = null,
-            string? sortBy = null)
+            string? sortBy = null,
+            bool? inStockOnly = null,
+            bool? featuredOnly = null)
         {
             Expression<Func<Product, bool>> filter = p => p.IsActive && !p.IsDeleted;
 
@@ -68,6 +71,18 @@ namespace ClimaCool.Application.Services
             {
                 Expression<Func<Product, bool>> priceFilter = p => p.Price <= maxPrice.Value;
                 filter = filter.And(priceFilter);
+            }
+
+            if (inStockOnly == true)
+            {
+                Expression<Func<Product, bool>> stockFilter = p => p.StockQuantity > 0;
+                filter = filter.And(stockFilter);
+            }
+
+            if (featuredOnly == true)
+            {
+                Expression<Func<Product, bool>> featuredFilter = p => p.IsFeatured;
+                filter = filter.And(featuredFilter);
             }
 
             Func<IQueryable<Product>, IOrderedQueryable<Product>>? orderBy = sortBy?.ToLower() switch
@@ -194,6 +209,8 @@ namespace ClimaCool.Application.Services
 
             _logger.LogInformation("Product created with ID {ProductId}", product.Id);
 
+            // TODO: Index product for search when OpenSearch integration is complete
+
             return _mapper.Map<ProductDto>(product);
         }
 
@@ -231,6 +248,8 @@ namespace ClimaCool.Application.Services
 
             _logger.LogInformation("Product {ProductId} updated", product.Id);
 
+            // TODO: Re-index product for search when OpenSearch integration is complete
+
             return _mapper.Map<ProductDto>(product);
         }
 
@@ -241,6 +260,8 @@ namespace ClimaCool.Application.Services
             
             _logger.LogInformation("Product {ProductId} soft deleted", id);
             
+            // TODO: Remove product from search index when OpenSearch integration is complete
+            
             return true;
         }
 
@@ -250,6 +271,8 @@ namespace ClimaCool.Application.Services
             await _unitOfWork.CompleteAsync();
             
             _logger.LogInformation("Stock updated for product {ProductId}: {Quantity}", productId, quantity);
+            
+            // TODO: Re-index product to update stock status when OpenSearch integration is complete
             
             return true;
         }
@@ -380,6 +403,53 @@ namespace ClimaCool.Application.Services
             _logger.LogInformation("Variant {VariantId} removed from product {ProductId}", variantId, productId);
 
             return true;
+        }
+
+        public async Task<IEnumerable<string>> GetSearchSuggestionsAsync(string query, int maxSuggestions = 10)
+        {
+            try
+            {
+                query = query.ToLower().Trim();
+                
+                // Get suggestions from product names, brands, and categories
+                var productSuggestions = await _productRepository.GetPagedAsync(
+                    p => p.IsActive && 
+                         (p.Name.ToLower().Contains(query) || 
+                          p.Brand!.ToLower().Contains(query) ||
+                          p.Category.Name.ToLower().Contains(query)),
+                    q => q.OrderBy(p => p.Name),
+                    1, maxSuggestions * 2); // Get more to filter
+
+                var suggestions = new List<string>();
+                
+                // Add product names
+                suggestions.AddRange(productSuggestions.Items
+                    .Where(p => p.Name.ToLower().Contains(query))
+                    .Select(p => p.Name)
+                    .Distinct());
+
+                // Add brand names
+                suggestions.AddRange(productSuggestions.Items
+                    .Where(p => !string.IsNullOrEmpty(p.Brand) && p.Brand.ToLower().Contains(query))
+                    .Select(p => p.Brand!)
+                    .Distinct());
+
+                // Add category names
+                suggestions.AddRange(productSuggestions.Items
+                    .Where(p => p.Category.Name.ToLower().Contains(query))
+                    .Select(p => p.Category.Name)
+                    .Distinct());
+
+                return suggestions
+                    .Distinct()
+                    .Take(maxSuggestions)
+                    .OrderBy(s => s);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting search suggestions for query: {Query}", query);
+                return [];
+            }
         }
     }
 }

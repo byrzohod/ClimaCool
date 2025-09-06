@@ -92,6 +92,17 @@ export interface ProductFilters {
   sortBy?: string;
   pageIndex?: number;
   pageSize?: number;
+  inStockOnly?: boolean;
+  featuredOnly?: boolean;
+}
+
+export interface SearchSuggestion {
+  value: string;
+  type: 'product' | 'brand' | 'category';
+}
+
+export interface SearchResult {
+  suggestions: string[];
 }
 
 export interface PagedResult<T> {

@@ -16,6 +16,7 @@ using ClimaCool.Domain.Entities;
 using ClimaCool.Domain.Interfaces;
 using ClimaCool.Infrastructure.Data;
 using ClimaCool.Infrastructure.Repositories;
+using ClimaCool.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -118,7 +119,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Configure AutoMapper
-builder.Services.AddAutoMapper(typeof(ProductMappingProfile).Assembly);
+builder.Services.AddAutoMapper(typeof(ProductMappingProfile).Assembly, typeof(SearchMappingProfile).Assembly);
 
 // Register Services
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
@@ -128,6 +129,9 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
+
+// TODO: Add Search Services when OpenSearch integration is complete
+// builder.Services.AddSearchServices(builder.Configuration);
 
 // Add CORS
 builder.Services.AddCors(options =>
