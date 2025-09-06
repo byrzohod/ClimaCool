@@ -8,7 +8,7 @@
 | User Registration & Auth | ✅ Completed | Critical | - | #2, #3 | JWT auth with refresh tokens |
 | Product Catalog | ✅ Completed | Critical | - | #4 | Backend + Frontend with categories |
 | Product Search & Filtering | ✅ Completed | Critical | - | #TBD | Enhanced search with autocomplete, filters, and suggestions. Backend API implemented with database search (OpenSearch ready) |
-| Shopping Cart | ✅ Completed | Critical | - | #5 | Full implementation: Backend + Frontend + E2E tests |
+| Shopping Cart | ✅ Completed | Critical | - | #6 | Full implementation: Backend + Frontend + E2E tests - PR ready for merge |
 | Basic Checkout | 🔴 Not Started | Critical | - | - | Needs cart complete |
 | Order Management | 🔴 Not Started | Critical | - | - | After checkout |
 | Admin Product Management | 🔴 Not Started | Critical | - | - | Admin dashboard |
