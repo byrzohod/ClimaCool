@@ -56,31 +56,32 @@ public class ApplicationDbContext : DbContext
             entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Description).HasMaxLength(200);
             
-            // Seed default roles
+            // Seed default roles with static dates
+            var seedDate = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             entity.HasData(
                 new Role 
                 { 
                     Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
                     Name = Role.Customer,
                     Description = "Regular customer",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = seedDate,
+                    UpdatedAt = seedDate
                 },
                 new Role 
                 { 
                     Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
                     Name = Role.Admin,
                     Description = "System administrator",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = seedDate,
+                    UpdatedAt = seedDate
                 },
                 new Role 
                 { 
                     Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
                     Name = Role.Vendor,
                     Description = "Vendor/Seller",
-                    CreatedAt = DateTime.UtcNow,
-                    UpdatedAt = DateTime.UtcNow
+                    CreatedAt = seedDate,
+                    UpdatedAt = seedDate
                 }
             );
         });
