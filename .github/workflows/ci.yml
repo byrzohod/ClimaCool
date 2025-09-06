@@ -123,18 +123,118 @@ jobs:
       working-directory: ./src/frontend/admin-portal
       continue-on-error: true
 
-  # Temporarily disabled - E2E infrastructure needs separate investigation
-  # The Shopping Cart feature is fully functional with backend + frontend + unit tests
-  # E2E tests will be re-enabled once infrastructure issues are resolved
-  # e2e-tests:
-  #   name: E2E Tests
-  #   runs-on: ubuntu-latest
-  #   needs: [backend-build-test, frontend-customer-portal-build-test]
+  e2e-tests:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: [backend-build-test, frontend-customer-portal-build-test]
+    
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: climacool_user
+          POSTGRES_PASSWORD: dev_password
+          POSTGRES_DB: climacool
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: ./src/frontend/customer-portal/package-lock.json
+    
+    - name: Install EF Core CLI
+      run: dotnet tool install --global dotnet-ef
+    
+    - name: Install Frontend Dependencies
+      run: npm ci
+      working-directory: ./src/frontend/customer-portal
+    
+    - name: Restore Backend Dependencies
+      run: dotnet restore
+      working-directory: ./src/backend
+    
+    - name: Build Backend
+      run: dotnet build --no-restore --configuration Release
+      working-directory: ./src/backend
+    
+    - name: Run Database Migrations
+      run: dotnet ef database update --project ../ClimaCool.Infrastructure
+      working-directory: ./src/backend/ClimaCool.API
+      env:
+        ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=climacool;Username=climacool_user;Password=dev_password"
+    
+    - name: Start Backend API
+      run: |
+        cd src/backend/ClimaCool.API
+        nohup dotnet run --environment Development --urls "http://localhost:5000" --no-launch-profile > backend.log 2>&1 &
+        echo $! > backend.pid
+        sleep 10
+        curl http://localhost:5000/health || (cat backend.log && exit 1)
+      env:
+        ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=climacool;Username=climacool_user;Password=dev_password"
+    
+    - name: Build Frontend
+      run: npm run build
+      working-directory: ./src/frontend/customer-portal
+    
+    - name: Start Frontend
+      run: |
+        cd src/frontend/customer-portal
+        nohup npm start -- --port 4201 > frontend.log 2>&1 &
+        echo $! > frontend.pid
+        # Wait for frontend to be ready
+        for i in {1..30}; do
+          if curl -s http://localhost:4201 > /dev/null; then
+            echo "Frontend is ready"
+            break
+          fi
+          sleep 2
+        done
+        curl -I http://localhost:4201 || (cat frontend.log && exit 1)
+    
+    - name: Run E2E Tests
+      run: npx cypress run --headless --browser chrome
+      working-directory: ./src/frontend/customer-portal
+    
+    - name: Stop Services
+      if: always()
+      run: |
+        if [ -f src/backend/ClimaCool.API/backend.pid ]; then
+          kill $(cat src/backend/ClimaCool.API/backend.pid) || true
+        fi
+        if [ -f src/frontend/customer-portal/frontend.pid ]; then
+          kill $(cat src/frontend/customer-portal/frontend.pid) || true
+        fi
+    
+    - name: Upload E2E Test Results
+      uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: e2e-test-results
+        path: |
+          ./src/frontend/customer-portal/cypress/screenshots
+          ./src/frontend/customer-portal/cypress/videos
 
   docker-build:
     name: Docker Build
     runs-on: ubuntu-latest
-    needs: [backend-build-test, frontend-customer-portal-build-test, frontend-admin-portal-build-test]
+    needs: [backend-build-test, frontend-customer-portal-build-test, frontend-admin-portal-build-test, e2e-tests]
     
     steps:
     - uses: actions/checkout@v4
