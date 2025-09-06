@@ -179,9 +179,32 @@ jobs:
     
     - name: Start backend API
       run: |
-        dotnet run --no-build --configuration Release &
-        sleep 15
-        curl -f http://localhost:5000/health || echo "Backend health check failed"
+        echo "Starting backend API..."
+        nohup dotnet run --no-build --configuration Release > backend.log 2>&1 &
+        BACKEND_PID=$!
+        echo "Backend PID: $BACKEND_PID"
+        
+        # Wait for backend to start with retries
+        for i in {1..30}; do
+          echo "Attempt $i: Checking if backend is ready..."
+          if curl -f http://localhost:5000/health; then
+            echo "Backend is ready!"
+            break
+          fi
+          if ! kill -0 $BACKEND_PID 2>/dev/null; then
+            echo "Backend process has died, showing logs:"
+            cat backend.log
+            exit 1
+          fi
+          sleep 2
+        done
+        
+        # Final health check
+        if ! curl -f http://localhost:5000/health; then
+          echo "Backend failed to start properly, showing logs:"
+          cat backend.log
+          exit 1
+        fi
       working-directory: ./src/backend/ClimaCool.API
       env:
         ASPNETCORE_URLS: "http://localhost:5000"
