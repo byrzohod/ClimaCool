@@ -2,70 +2,37 @@
   "products": [
     {
       "id": 1,
-      "name": "Central Air Conditioner 3.5 Ton",
-      "slug": "central-air-conditioner-3-5-ton",
-      "shortDescription": "High-efficiency central air conditioning unit",
+      "name": "Smart AC Unit",
+      "description": "Energy-efficient smart air conditioner with WiFi control",
       "price": 2499.99,
-      "compareAtPrice": 2799.99,
-      "brand": "ClimaCool Pro",
-      "primaryImageUrl": "/assets/images/products/ac-central-3-5-ton.jpg",
-      "inStock": true,
-      "isFeatured": true,
-      "averageRating": 4.5,
-      "reviewCount": 128
+      "stockQuantity": 10,
+      "categoryId": 1,
+      "categoryName": "Air Conditioners",
+      "imageUrl": "/assets/images/ac-unit.jpg"
     },
     {
       "id": 2,
-      "name": "Solar Panel System 5kW",
-      "slug": "solar-panel-system-5kw",
-      "shortDescription": "Complete residential solar panel system",
-      "price": 8999.99,
-      "brand": "SolarMax",
-      "primaryImageUrl": "/assets/images/products/solar-panel-5kw.jpg",
-      "inStock": true,
-      "isFeatured": false,
-      "averageRating": 4.8,
-      "reviewCount": 85
+      "name": "Heat Pump System",
+      "description": "Dual-mode heating and cooling system",
+      "price": 3999.99,
+      "stockQuantity": 5,
+      "categoryId": 2,
+      "categoryName": "Heat Pumps",
+      "imageUrl": "/assets/images/heat-pump.jpg"
     },
     {
       "id": 3,
-      "name": "Heat Pump Dual Zone",
-      "slug": "heat-pump-dual-zone",
-      "shortDescription": "Energy-efficient heat pump for two zones",
-      "price": 3799.99,
-      "brand": "ClimaCool Pro",
-      "primaryImageUrl": "/assets/images/products/heat-pump-dual.jpg",
-      "inStock": false,
-      "isFeatured": false,
-      "averageRating": 4.2,
-      "reviewCount": 67
+      "name": "HEPA Air Filter",
+      "description": "Medical-grade air filtration system",
+      "price": 599.99,
+      "stockQuantity": 0,
+      "categoryId": 3,
+      "categoryName": "Air Filters",
+      "imageUrl": "/assets/images/air-filter.jpg"
     }
   ],
-  "cartItems": [
-    {
-      "id": 1,
-      "productId": 1,
-      "productName": "Central Air Conditioner 3.5 Ton",
-      "productImageUrl": "/assets/images/products/ac-central-3-5-ton.jpg",
-      "unitPrice": 2499.99,
-      "quantity": 1,
-      "totalPrice": 2499.99
-    }
-  ],
-  "cart": {
-    "id": 1,
-    "items": [
-      {
-        "id": 1,
-        "productId": 1,
-        "productName": "Central Air Conditioner 3.5 Ton",
-        "productImageUrl": "/assets/images/products/ac-central-3-5-ton.jpg",
-        "unitPrice": 2499.99,
-        "quantity": 1,
-        "totalPrice": 2499.99
-      }
-    ],
-    "itemCount": 1,
-    "subTotal": 2499.99
-  }
+  "totalCount": 3,
+  "pageNumber": 1,
+  "pageSize": 10,
+  "totalPages": 1
 }

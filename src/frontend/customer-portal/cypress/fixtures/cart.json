@@ -1,0 +1,22 @@
+{
+  "id": "test-cart-id",
+  "sessionId": "test-session-id",
+  "userId": null,
+  "items": [
+    {
+      "id": 1,
+      "cartId": "test-cart-id",
+      "productId": 1,
+      "productName": "Smart AC Unit",
+      "productDescription": "Energy-efficient smart air conditioner with WiFi control",
+      "productImageUrl": "/assets/images/ac-unit.jpg",
+      "quantity": 1,
+      "price": 2499.99,
+      "subTotal": 2499.99
+    }
+  ],
+  "itemCount": 1,
+  "subTotal": 2499.99,
+  "createdAt": "2024-01-01T00:00:00Z",
+  "updatedAt": "2024-01-01T00:00:00Z"
+}
