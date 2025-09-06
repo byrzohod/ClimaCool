@@ -180,7 +180,7 @@ jobs:
     - name: Start backend API
       run: |
         echo "Starting backend API..."
-        nohup dotnet run --no-build --configuration Release > backend.log 2>&1 &
+        nohup dotnet run --no-build --configuration Release --no-launch-profile > backend.log 2>&1 &
         BACKEND_PID=$!
         echo "Backend PID: $BACKEND_PID"
         
