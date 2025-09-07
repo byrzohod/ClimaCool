@@ -9,9 +9,9 @@
 | Product Catalog | ✅ Completed | Critical | - | #4 | Backend + Frontend with categories |
 | Product Search & Filtering | ✅ Completed | Critical | - | #TBD | Enhanced search with autocomplete, filters, and suggestions. Backend API implemented with database search (OpenSearch ready) |
 | Shopping Cart | ✅ Completed | Critical | - | #6 | Full implementation: Backend + Frontend + E2E tests - PR ready for merge |
-| Basic Checkout | 🔴 Not Started | Critical | - | - | Needs cart complete |
-| Order Management | 🔴 Not Started | Critical | - | - | After checkout |
-| Admin Product Management | 🔴 Not Started | Critical | - | - | Admin dashboard |
+| Basic Checkout | ✅ Completed | Critical | - | #TBD | Complete implementation: Backend APIs + Frontend (NgRx, multi-step checkout) + E2E tests |
+| Order Management | ✅ Completed | Critical | - | #TBD | Complete implementation: Backend (status tracking, history) + Frontend (dashboard, details, admin) + E2E tests |
+| Admin Product Management | ✅ Completed | Critical | - | #TBD | Complete implementation: Backend (CRUD, bulk ops, images) + Frontend (list, form, inventory) + E2E tests |
 
 ### Phase 2: Enhanced (Months 4-6)
 | Feature | Status | Priority | Assigned | PR # | Notes |

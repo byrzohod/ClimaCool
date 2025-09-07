@@ -28,6 +28,11 @@ public class ApplicationDbContext : DbContext
     public DbSet<Cart> Carts { get; set; }
     public DbSet<CartItem> CartItems { get; set; }
     
+    // Orders
+    public DbSet<Order> Orders { get; set; }
+    public DbSet<OrderItem> OrderItems { get; set; }
+    public DbSet<Address> Addresses { get; set; }
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -276,6 +281,91 @@ public class ApplicationDbContext : DbContext
             entity.HasOne(e => e.Cart)
                 .WithMany(c => c.Items)
                 .HasForeignKey(e => e.CartId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasOne(e => e.Product)
+                .WithMany()
+                .HasForeignKey(e => e.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            entity.HasOne(e => e.ProductVariant)
+                .WithMany()
+                .HasForeignKey(e => e.ProductVariantId)
+                .OnDelete(DeleteBehavior.SetNull);
+        });
+        
+        // Address entity configuration
+        modelBuilder.Entity<Address>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.UserId);
+            entity.Property(e => e.FirstName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.LastName).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.Company).HasMaxLength(200);
+            entity.Property(e => e.AddressLine1).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.AddressLine2).HasMaxLength(255);
+            entity.Property(e => e.City).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.State).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.PostalCode).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.Country).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+            
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            // Query filter for soft delete
+            entity.HasQueryFilter(e => !e.IsDeleted);
+        });
+        
+        // Order entity configuration
+        modelBuilder.Entity<Order>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.UserId);
+            entity.HasIndex(e => e.OrderNumber).IsUnique();
+            entity.Property(e => e.OrderNumber).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.SubTotal).HasPrecision(18, 2);
+            entity.Property(e => e.TaxAmount).HasPrecision(18, 2);
+            entity.Property(e => e.ShippingAmount).HasPrecision(18, 2);
+            entity.Property(e => e.TotalAmount).HasPrecision(18, 2);
+            entity.Property(e => e.Notes).HasMaxLength(1000);
+            
+            entity.HasOne(e => e.User)
+                .WithMany()
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            entity.HasOne(e => e.ShippingAddress)
+                .WithMany()
+                .HasForeignKey(e => e.ShippingAddressId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            entity.HasOne(e => e.BillingAddress)
+                .WithMany()
+                .HasForeignKey(e => e.BillingAddressId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            // Query filter for soft delete
+            entity.HasQueryFilter(e => !e.IsDeleted);
+        });
+        
+        // OrderItem entity configuration
+        modelBuilder.Entity<OrderItem>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.HasIndex(e => e.OrderId);
+            entity.Property(e => e.ProductName).IsRequired().HasMaxLength(255);
+            entity.Property(e => e.ProductSku).HasMaxLength(100);
+            entity.Property(e => e.VariantName).HasMaxLength(255);
+            entity.Property(e => e.UnitPrice).HasPrecision(18, 2);
+            entity.Property(e => e.ProductDescription).HasMaxLength(2000);
+            entity.Property(e => e.ProductImageUrl).HasMaxLength(500);
+            
+            entity.HasOne(e => e.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(e => e.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
                 
             entity.HasOne(e => e.Product)

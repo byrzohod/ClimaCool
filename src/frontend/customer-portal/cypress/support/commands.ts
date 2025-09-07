@@ -40,6 +40,9 @@ Cypress.Commands.add('closeCartSidebar', () => {
   cy.get('[data-testid="cart-sidebar"]').should('not.be.visible');
 });
 
+// Import checkout commands
+import './checkout-commands';
+
 declare global {
   namespace Cypress {
     interface Chainable {
