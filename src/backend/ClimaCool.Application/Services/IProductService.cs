@@ -26,7 +26,7 @@ namespace ClimaCool.Application.Services
         Task<IEnumerable<ProductListDto>> GetLowStockProductsAsync();
         Task<IEnumerable<string>> GetSearchSuggestionsAsync(string query, int maxSuggestions = 10);
         Task<ProductDto> CreateProductAsync(CreateProductDto dto);
-        Task<ProductDto> UpdateProductAsync(UpdateProductDto dto);
+        Task<ProductDto> UpdateProductAsync(int id, UpdateProductDto dto);
         Task<bool> DeleteProductAsync(int id);
         Task<bool> UpdateStockAsync(int productId, int quantity);
         Task<bool> AddProductImageAsync(int productId, string imageUrl, string? thumbnailUrl, string? altText, bool isPrimary);

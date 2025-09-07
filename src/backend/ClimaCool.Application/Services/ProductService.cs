@@ -214,16 +214,16 @@ namespace ClimaCool.Application.Services
             return _mapper.Map<ProductDto>(product);
         }
 
-        public async Task<ProductDto> UpdateProductAsync(UpdateProductDto dto)
+        public async Task<ProductDto> UpdateProductAsync(int id, UpdateProductDto dto)
         {
-            var product = await _productRepository.GetByIdAsync(dto.Id);
+            var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
             {
-                throw new ApplicationException($"Product with ID {dto.Id} not found.");
+                throw new ApplicationException($"Product with ID {id} not found.");
             }
 
             // Validate SKU uniqueness if changed
-            if (product.SKU != dto.SKU && !await _productRepository.IsSkuUniqueAsync(dto.SKU, dto.Id))
+            if (dto.SKU != null && product.SKU != dto.SKU && !await _productRepository.IsSkuUniqueAsync(dto.SKU, id))
             {
                 throw new ApplicationException($"SKU '{dto.SKU}' is already in use.");
             }
@@ -231,11 +231,11 @@ namespace ClimaCool.Application.Services
             _mapper.Map(dto, product);
             
             // Update slug if name changed
-            if (product.Name != dto.Name)
+            if (dto.Name != null && product.Name != dto.Name)
             {
                 product.Slug = dto.Name.ToSlug();
                 int counter = 1;
-                while (!await _productRepository.IsSlugUniqueAsync(product.Slug, dto.Id))
+                while (!await _productRepository.IsSlugUniqueAsync(product.Slug, id))
                 {
                     product.Slug = $"{dto.Name.ToSlug()}-{counter++}";
                 }
