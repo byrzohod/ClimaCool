@@ -1,5 +1,6 @@
 using AutoMapper;
 using ClimaCool.Application.DTOs.Order;
+using ClimaCool.Application.DTOs.Checkout;
 using ClimaCool.Domain.Entities;
 using ClimaCool.Domain.Enums;
 using ClimaCool.Domain.Interfaces;

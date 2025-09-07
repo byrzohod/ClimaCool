@@ -80,7 +80,6 @@ jobs:
     - name: Lint
       run: npm run lint
       working-directory: ./src/frontend/customer-portal
-      continue-on-error: true
     
     - name: Build
       run: npm run build
@@ -112,7 +111,6 @@ jobs:
     - name: Lint
       run: npm run lint
       working-directory: ./src/frontend/admin-portal
-      continue-on-error: true
     
     - name: Build
       run: npm run build

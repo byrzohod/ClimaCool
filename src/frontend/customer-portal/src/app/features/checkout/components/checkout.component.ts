@@ -38,7 +38,11 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
            loading: loading$ | async,
            error: error$ | async,
            cartItems: cartItems$ | async,
-           completedOrder: completedOrder$ | async
+           completedOrder: completedOrder$ | async,
+           subtotal: subtotal$ | async,
+           shippingValid: shippingValid$ | async,
+           billingValid: billingValid$ | async,
+           canProceed: canProceed$ | async
          } as vm">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <!-- Header -->
@@ -63,10 +67,10 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
           <div class="lg:col-span-2 space-y-6">
             
             <!-- Step 1: Shipping Address -->
-            <div *ngIf="(currentStep$ | async) === 1" data-testid="checkout-step-shipping">
+            <div *ngIf="vm.currentStep === 1" data-testid="checkout-step-shipping">
               <app-address-form
                 title="Shipping Address"
-                [address]="(shippingAddress$ | async) || undefined"
+                [address]="vm.shippingAddress || undefined"
                 [addressType]="AddressType.Shipping"
                 (addressChange)="onShippingAddressChange($event)"
                 (validChange)="onShippingValidChange($event)"
@@ -79,7 +83,7 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
                   <input
                     type="checkbox"
                     id="sameAsShipping"
-                    [checked]="sameAsShipping$ | async"
+                    [checked]="vm.sameAsShipping"
                     (change)="onSameAsShippingChange($event.target.checked)"
                     data-testid="checkout-same-as-shipping"
                     class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
@@ -90,10 +94,10 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
               </div>
 
               <!-- Billing Address (if different) -->
-              <div *ngIf="!(sameAsShipping$ | async)" data-testid="checkout-billing-section">
+              <div *ngIf="!vm.sameAsShipping" data-testid="checkout-billing-section">
                 <app-address-form
                   title="Billing Address"
-                  [address]="(billingAddress$ | async) || undefined"
+                  [address]="vm.billingAddress || undefined"
                   [addressType]="AddressType.Billing"
                   (addressChange)="onBillingAddressChange($event)"
                   (validChange)="onBillingValidChange($event)"
@@ -108,7 +112,7 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
                 </label>
                 <textarea
                   id="notes"
-                  [value]="notes$ | async"
+                  [value]="vm.notes"
                   (input)="onNotesChange($any($event.target).value)"
                   data-testid="checkout-notes"
                   rows="3"
@@ -119,7 +123,7 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
             </div>
 
             <!-- Step 2: Review Order -->
-            <div *ngIf="(currentStep$ | async) === 2" data-testid="checkout-step-review">
+            <div *ngIf="vm.currentStep === 2" data-testid="checkout-step-review">
               <div class="bg-white p-6 rounded-lg border border-gray-200">
                 <h3 class="text-lg font-semibold text-gray-900 mb-4">Review Your Order</h3>
                 
@@ -129,13 +133,13 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
                   <div>
                     <h4 class="text-sm font-medium text-gray-900 mb-2">Shipping Address</h4>
                     <div class="text-sm text-gray-600" data-testid="checkout-review-shipping">
-                      <div>{{ shippingAddress?.firstName }} {{ shippingAddress?.lastName }}</div>
-                      <div *ngIf="shippingAddress?.company">{{ shippingAddress?.company }}</div>
-                      <div>{{ shippingAddress?.addressLine1 }}</div>
-                      <div *ngIf="shippingAddress?.addressLine2">{{ shippingAddress?.addressLine2 }}</div>
-                      <div>{{ shippingAddress?.city }}, {{ shippingAddress?.state }} {{ shippingAddress?.postalCode }}</div>
-                      <div>{{ shippingAddress?.country }}</div>
-                      <div *ngIf="shippingAddress?.phoneNumber">{{ shippingAddress?.phoneNumber }}</div>
+                      <div>{{ vm.shippingAddress?.firstName }} {{ vm.shippingAddress?.lastName }}</div>
+                      <div *ngIf="vm.shippingAddress?.company">{{ vm.shippingAddress?.company }}</div>
+                      <div>{{ vm.shippingAddress?.addressLine1 }}</div>
+                      <div *ngIf="vm.shippingAddress?.addressLine2">{{ vm.shippingAddress?.addressLine2 }}</div>
+                      <div>{{ vm.shippingAddress?.city }}, {{ vm.shippingAddress?.state }} {{ vm.shippingAddress?.postalCode }}</div>
+                      <div>{{ vm.shippingAddress?.country }}</div>
+                      <div *ngIf="vm.shippingAddress?.phoneNumber">{{ vm.shippingAddress?.phoneNumber }}</div>
                     </div>
                   </div>
                   
@@ -143,34 +147,34 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
                   <div>
                     <h4 class="text-sm font-medium text-gray-900 mb-2">Billing Address</h4>
                     <div class="text-sm text-gray-600" data-testid="checkout-review-billing">
-                      <ng-container *ngIf="sameAsShipping">
+                      <ng-container *ngIf="vm.sameAsShipping">
                         <div class="text-gray-500 italic">Same as shipping address</div>
                       </ng-container>
-                      <ng-container *ngIf="!sameAsShipping">
-                        <div>{{ billingAddress?.firstName }} {{ billingAddress?.lastName }}</div>
-                        <div *ngIf="billingAddress?.company">{{ billingAddress?.company }}</div>
-                        <div>{{ billingAddress?.addressLine1 }}</div>
-                        <div *ngIf="billingAddress?.addressLine2">{{ billingAddress?.addressLine2 }}</div>
-                        <div>{{ billingAddress?.city }}, {{ billingAddress?.state }} {{ billingAddress?.postalCode }}</div>
-                        <div>{{ billingAddress?.country }}</div>
-                        <div *ngIf="billingAddress?.phoneNumber">{{ billingAddress?.phoneNumber }}</div>
+                      <ng-container *ngIf="!vm.sameAsShipping">
+                        <div>{{ vm.billingAddress?.firstName }} {{ vm.billingAddress?.lastName }}</div>
+                        <div *ngIf="vm.billingAddress?.company">{{ vm.billingAddress?.company }}</div>
+                        <div>{{ vm.billingAddress?.addressLine1 }}</div>
+                        <div *ngIf="vm.billingAddress?.addressLine2">{{ vm.billingAddress?.addressLine2 }}</div>
+                        <div>{{ vm.billingAddress?.city }}, {{ vm.billingAddress?.state }} {{ vm.billingAddress?.postalCode }}</div>
+                        <div>{{ vm.billingAddress?.country }}</div>
+                        <div *ngIf="vm.billingAddress?.phoneNumber">{{ vm.billingAddress?.phoneNumber }}</div>
                       </ng-container>
                     </div>
                   </div>
                 </div>
 
                 <!-- Order Notes -->
-                <div *ngIf="notes" class="mb-6">
+                <div *ngIf="vm.notes" class="mb-6">
                   <h4 class="text-sm font-medium text-gray-900 mb-2">Order Notes</h4>
                   <div class="text-sm text-gray-600" data-testid="checkout-review-notes">
-                    {{ notes }}
+                    {{ vm.notes }}
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Step 3: Order Confirmation -->
-            <div *ngIf="currentStep === 3" data-testid="checkout-step-confirmation">
+            <div *ngIf="vm.currentStep === 3" data-testid="checkout-step-confirmation">
               <div class="bg-white p-6 rounded-lg border border-gray-200 text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
                   <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,7 +186,7 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
                   Thank you for your order. Your order number is:
                 </p>
                 <div class="text-xl font-bold text-blue-600 mb-6" data-testid="checkout-order-number">
-                  {{ completedOrder?.orderNumber }}
+                  {{ vm.completedOrder?.orderNumber }}
                 </div>
                 <div class="space-x-4">
                   <button
@@ -202,36 +206,36 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
             </div>
 
             <!-- Navigation Buttons -->
-            <div class="flex justify-between pt-6" *ngIf="currentStep < 3">
+            <div class="flex justify-between pt-6" *ngIf="vm.currentStep && vm.currentStep < 3">
               <button
-                *ngIf="currentStep > 1"
+                *ngIf="vm.currentStep && vm.currentStep > 1"
                 (click)="previousStep()"
                 class="bg-gray-200 text-gray-800 px-6 py-2 rounded-md hover:bg-gray-300 transition-colors"
                 data-testid="checkout-back-button">
                 Back
               </button>
-              <div *ngIf="currentStep === 1"></div> <!-- Spacer for first step -->
+              <div *ngIf="vm.currentStep === 1"></div> <!-- Spacer for first step -->
               
               <button
-                *ngIf="currentStep === 1"
+                *ngIf="vm.currentStep === 1"
                 (click)="nextStep()"
-                [disabled]="!canProceedFromStep1()"
+                [disabled]="!vm.canProceed"
                 class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                 data-testid="checkout-continue-button">
                 Continue to Review
               </button>
               
               <button
-                *ngIf="currentStep === 2"
+                *ngIf="vm.currentStep === 2"
                 (click)="placeOrder()"
-                [disabled]="loading"
+                [disabled]="vm.loading"
                 class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
                 data-testid="checkout-place-order-button">
-                <svg *ngIf="loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <svg *ngIf="vm.loading" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <span>{{ loading ? 'Placing Order...' : 'Place Order' }}</span>
+                <span>{{ vm.loading ? 'Placing Order...' : 'Place Order' }}</span>
               </button>
             </div>
           </div>
@@ -239,8 +243,8 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
           <!-- Order Summary Sidebar -->
           <div class="lg:col-span-1">
             <app-order-summary
-              [cartItems]="cartItems"
-              [subtotal]="subtotal"
+              [cartItems]="vm.cartItems || []"
+              [subtotal]="vm.subtotal || 0"
               [taxAmount]="taxAmount"
               [shippingAmount]="shippingAmount"
               [totalAmount]="totalAmount"
@@ -250,7 +254,7 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
         </div>
 
         <!-- Error Message -->
-        <div *ngIf="error" 
+        <div *ngIf="vm.error" 
              class="mt-6 p-4 bg-red-50 border border-red-200 rounded-md"
              data-testid="checkout-error-message">
           <div class="flex">
@@ -262,7 +266,7 @@ import * as CartSelectors from '../../cart/store/cart.selectors';
                 Error placing order
               </h3>
               <div class="mt-2 text-sm text-red-700">
-                {{ error }}
+                {{ vm.error }}
               </div>
             </div>
           </div>

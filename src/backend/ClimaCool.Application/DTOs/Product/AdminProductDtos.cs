@@ -77,3 +77,20 @@ public class ProductImageDto
     public bool IsPrimary { get; set; }
     public int? DisplayOrder { get; set; }
 }
+
+public class ProductFilterRequest
+{
+    public string? SearchTerm { get; set; }
+    public Guid? CategoryId { get; set; }
+    public decimal? MinPrice { get; set; }
+    public decimal? MaxPrice { get; set; }
+    public bool? InStock { get; set; }
+    public bool? IsActive { get; set; }
+    public bool? IsFeatured { get; set; }
+    public string? Brand { get; set; }
+    public List<string>? Tags { get; set; }
+    public string? SortBy { get; set; } = "name";
+    public bool SortDescending { get; set; }
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 20;
+}
