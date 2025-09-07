@@ -116,6 +116,8 @@ builder.Services.AddScoped(typeof(ICatalogRepository<>), typeof(CatalogRepositor
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IAddressRepository, AddressRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Configure AutoMapper
@@ -129,6 +131,8 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
 
 // TODO: Add Search Services when OpenSearch integration is complete
 // builder.Services.AddSearchServices(builder.Configuration);

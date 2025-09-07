@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -141,7 +141,8 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
   itemCount$: Observable<number>;
 
   constructor(
-    private store: Store
+    private store: Store,
+    private router: Router
   ) {
     this.cart$ = this.store.select(CartSelectors.selectCart);
     this.items$ = this.store.select(CartSelectors.selectCartItems);
@@ -184,19 +185,16 @@ export class CartSidebarComponent implements OnInit, OnDestroy {
 
   navigateToCheckout(): void {
     this.closeCart();
-    // TODO: Navigate to checkout page when implemented
-    console.log('Navigate to checkout');
+    this.router.navigate(['/checkout']);
   }
 
   navigateToCart(): void {
     this.closeCart();
-    // TODO: Navigate to cart page when implemented
-    console.log('Navigate to cart page');
+    this.router.navigate(['/cart']);
   }
 
   closeCartAndNavigate(path: string): void {
     this.closeCart();
-    // TODO: Navigate to specified path
-    console.log('Navigate to:', path);
+    this.router.navigate([path]);
   }
 }

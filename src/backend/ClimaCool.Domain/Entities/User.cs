@@ -24,6 +24,8 @@ public class User : BaseEntity
     // Navigation properties
     public virtual ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+    public virtual ICollection<Address> Addresses { get; set; } = new List<Address>();
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     
     public bool IsLockedOut()
     {

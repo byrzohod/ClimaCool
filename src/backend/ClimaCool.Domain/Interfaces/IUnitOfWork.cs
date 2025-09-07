@@ -8,6 +8,8 @@ public interface IUnitOfWork : IDisposable
     IRepository<Role> Roles { get; }
     IRepository<RefreshToken> RefreshTokens { get; }
     ICartRepository Carts { get; }
+    IOrderRepository Orders { get; }
+    IAddressRepository Addresses { get; }
     
     Task<int> CompleteAsync();
     Task BeginTransactionAsync();
