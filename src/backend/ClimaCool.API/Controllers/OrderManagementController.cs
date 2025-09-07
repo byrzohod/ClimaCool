@@ -1,4 +1,5 @@
 using ClimaCool.Application.DTOs.Order;
+using ClimaCool.Application.DTOs.Checkout;
 using ClimaCool.Application.Services;
 using ClimaCool.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;

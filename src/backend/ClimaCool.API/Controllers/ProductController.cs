@@ -205,16 +205,13 @@ namespace ClimaCool.API.Controllers
         {
             try
             {
-                if (id != dto.Id)
-                    return BadRequest(new { message = "Product ID mismatch" });
-
                 var validationResult = await _updateValidator.ValidateAsync(dto);
                 if (!validationResult.IsValid)
                 {
                     return BadRequest(new { errors = validationResult.Errors.Select(e => e.ErrorMessage) });
                 }
 
-                var product = await _productService.UpdateProductAsync(dto);
+                var product = await _productService.UpdateProductAsync(id, dto);
                 return Ok(product);
             }
             catch (ApplicationException ex)
