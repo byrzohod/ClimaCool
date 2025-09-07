@@ -12,7 +12,7 @@ public class CreateProductDto
     public decimal? Cost { get; set; }
     public int QuantityInStock { get; set; }
     public int LowStockThreshold { get; set; } = 10;
-    public Guid CategoryId { get; set; }
+    public int CategoryId { get; set; }
     public string? Brand { get; set; }
     public List<string>? Tags { get; set; }
     public decimal? Weight { get; set; }
@@ -37,7 +37,7 @@ public class UpdateProductDto
     public decimal? Cost { get; set; }
     public int? QuantityInStock { get; set; }
     public int? LowStockThreshold { get; set; }
-    public Guid? CategoryId { get; set; }
+    public int? CategoryId { get; set; }
     public string? Brand { get; set; }
     public List<string>? Tags { get; set; }
     public decimal? Weight { get; set; }
@@ -52,8 +52,8 @@ public class UpdateProductDto
 
 public class BulkUpdateProductsDto
 {
-    public List<Guid> ProductIds { get; set; } = new();
-    public Guid? CategoryId { get; set; }
+    public List<int> ProductIds { get; set; } = new();
+    public int? CategoryId { get; set; }
     public bool? IsActive { get; set; }
     public bool? IsFeatured { get; set; }
     public decimal? PriceAdjustment { get; set; }
@@ -64,7 +64,7 @@ public class BulkUpdateProductsDto
 
 public class InventoryUpdateDto
 {
-    public Guid ProductId { get; set; }
+    public int ProductId { get; set; }
     public int Quantity { get; set; }
     public string AdjustmentType { get; set; } = "set"; // "set", "add", "subtract"
     public string? Reason { get; set; }
@@ -81,7 +81,7 @@ public class ProductImageDto
 public class ProductFilterRequest
 {
     public string? SearchTerm { get; set; }
-    public Guid? CategoryId { get; set; }
+    public int? CategoryId { get; set; }
     public decimal? MinPrice { get; set; }
     public decimal? MaxPrice { get; set; }
     public bool? InStock { get; set; }

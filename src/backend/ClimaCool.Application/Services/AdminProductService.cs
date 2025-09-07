@@ -63,14 +63,12 @@ public class AdminProductService : IAdminProductService
             SKU = dto.SKU,
             Price = dto.Price,
             CompareAtPrice = dto.CompareAtPrice,
-            Cost = dto.Cost,
-            QuantityInStock = dto.QuantityInStock,
+            CostPrice = dto.Cost ?? 0,
+            StockQuantity = dto.QuantityInStock,
             LowStockThreshold = dto.LowStockThreshold,
             CategoryId = dto.CategoryId,
             Brand = dto.Brand,
-            Tags = dto.Tags,
             Weight = dto.Weight,
-            Dimensions = dto.Dimensions,
             IsActive = dto.IsActive,
             IsFeatured = dto.IsFeatured,
             MetaTitle = dto.MetaTitle ?? dto.Name,
@@ -81,7 +79,7 @@ public class AdminProductService : IAdminProductService
         };
 
         await _productRepository.AddAsync(product);
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.CompleteAsync();
 
         // Handle images if provided
         if (dto.Images != null && dto.Images.Any())
@@ -92,7 +90,7 @@ public class AdminProductService : IAdminProductService
         return MapToDto(product);
     }
 
-    public async Task<ProductDto> UpdateProductAsync(Guid id, UpdateProductDto dto)
+    public async Task<ProductDto> UpdateProductAsync(int id, UpdateProductDto dto)
     {
         var product = await _productRepository.GetByIdAsync(id);
         if (product == null)
@@ -101,7 +99,7 @@ public class AdminProductService : IAdminProductService
         }
 
         // Validate category if changed
-        if (dto.CategoryId.HasValue && dto.CategoryId != product.CategoryId)
+        if (dto.CategoryId.HasValue && dto.CategoryId.Value != product.CategoryId)
         {
             var category = await _categoryRepository.GetByIdAsync(dto.CategoryId.Value);
             if (category == null)
@@ -138,13 +136,11 @@ public class AdminProductService : IAdminProductService
         if (!string.IsNullOrEmpty(dto.SKU)) product.SKU = dto.SKU;
         if (dto.Price.HasValue) product.Price = dto.Price.Value;
         if (dto.CompareAtPrice.HasValue) product.CompareAtPrice = dto.CompareAtPrice;
-        if (dto.Cost.HasValue) product.Cost = dto.Cost;
-        if (dto.QuantityInStock.HasValue) product.QuantityInStock = dto.QuantityInStock.Value;
+        if (dto.Cost.HasValue) product.CostPrice = dto.Cost.Value;
+        if (dto.QuantityInStock.HasValue) product.StockQuantity = dto.QuantityInStock.Value;
         if (dto.LowStockThreshold.HasValue) product.LowStockThreshold = dto.LowStockThreshold.Value;
         if (!string.IsNullOrEmpty(dto.Brand)) product.Brand = dto.Brand;
-        if (dto.Tags != null) product.Tags = dto.Tags;
         if (dto.Weight.HasValue) product.Weight = dto.Weight;
-        if (!string.IsNullOrEmpty(dto.Dimensions)) product.Dimensions = dto.Dimensions;
         if (dto.IsActive.HasValue) product.IsActive = dto.IsActive.Value;
         if (dto.IsFeatured.HasValue) product.IsFeatured = dto.IsFeatured.Value;
         if (!string.IsNullOrEmpty(dto.MetaTitle)) product.MetaTitle = dto.MetaTitle;
@@ -154,7 +150,7 @@ public class AdminProductService : IAdminProductService
         product.UpdatedAt = DateTime.UtcNow;
 
         await _productRepository.UpdateAsync(product);
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.CompleteAsync();
 
         // Handle images if provided
         if (dto.Images != null)
@@ -165,7 +161,7 @@ public class AdminProductService : IAdminProductService
         return MapToDto(product);
     }
 
-    public async Task<bool> DeleteProductAsync(Guid id)
+    public async Task<bool> DeleteProductAsync(int id)
     {
         var product = await _productRepository.GetByIdAsync(id);
         if (product == null)
@@ -179,7 +175,7 @@ public class AdminProductService : IAdminProductService
         product.UpdatedAt = DateTime.UtcNow;
 
         await _productRepository.UpdateAsync(product);
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.CompleteAsync();
 
         return true;
     }
@@ -224,14 +220,10 @@ public class AdminProductService : IAdminProductService
                 }
                 if (dto.StockAdjustment.HasValue)
                 {
-                    product.QuantityInStock += dto.StockAdjustment.Value;
-                    product.QuantityInStock = Math.Max(0, product.QuantityInStock); // Ensure stock doesn't go negative
+                    product.StockQuantity += dto.StockAdjustment.Value;
+                    product.StockQuantity = Math.Max(0, product.StockQuantity); // Ensure stock doesn't go negative
                 }
-                if (dto.Tags != null && dto.Tags.Any())
-                {
-                    product.Tags = product.Tags ?? new List<string>();
-                    product.Tags = product.Tags.Union(dto.Tags).ToList();
-                }
+                // Tags functionality removed - not in domain model
 
                 product.UpdatedAt = DateTime.UtcNow;
                 await _productRepository.UpdateAsync(product);
@@ -245,11 +237,11 @@ public class AdminProductService : IAdminProductService
             }
         }
 
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.CompleteAsync();
         return result;
     }
 
-    public async Task<BulkOperationResult> BulkDeleteProductsAsync(List<Guid> productIds)
+    public async Task<BulkOperationResult> BulkDeleteProductsAsync(List<int> productIds)
     {
         var result = new BulkOperationResult
         {
@@ -285,7 +277,7 @@ public class AdminProductService : IAdminProductService
         return result;
     }
 
-    public async Task<string> UploadProductImageAsync(Guid productId, IFormFile file)
+    public async Task<string> UploadProductImageAsync(int productId, IFormFile file)
     {
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null)
@@ -300,20 +292,20 @@ public class AdminProductService : IAdminProductService
         product.Images = product.Images ?? new List<ProductImage>();
         product.Images.Add(new ProductImage
         {
-            Url = imageUrl,
-            Alt = product.Name,
+            ImageUrl = imageUrl,
+            AltText = product.Name,
             IsPrimary = !product.Images.Any(), // First image is primary
             DisplayOrder = product.Images.Count
         });
 
         product.UpdatedAt = DateTime.UtcNow;
         await _productRepository.UpdateAsync(product);
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.CompleteAsync();
 
         return imageUrl;
     }
 
-    public async Task<bool> DeleteProductImageAsync(Guid productId, string imageUrl)
+    public async Task<bool> DeleteProductImageAsync(int productId, string imageUrl)
     {
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null)
@@ -326,7 +318,7 @@ public class AdminProductService : IAdminProductService
             return false;
         }
 
-        var image = product.Images.FirstOrDefault(i => i.Url == imageUrl);
+        var image = product.Images.FirstOrDefault(i => i.ImageUrl == imageUrl);
         if (image == null)
         {
             return false;
@@ -346,7 +338,7 @@ public class AdminProductService : IAdminProductService
 
         product.UpdatedAt = DateTime.UtcNow;
         await _productRepository.UpdateAsync(product);
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.CompleteAsync();
 
         return true;
     }
@@ -381,9 +373,11 @@ public class AdminProductService : IAdminProductService
                 }
 
                 // Check if product exists (update) or create new
-                var existingProduct = await _productRepository.GetBySKUAsync(record.SKU);
+                // Check if product with SKU exists
+                var existingProducts = await _productRepository.FindAsync(p => p.SKU == record.SKU);
+                var product = existingProducts.FirstOrDefault();
                 
-                if (existingProduct != null)
+                if (product != null)
                 {
                     // Update existing product
                     var updateDto = new UpdateProductDto
@@ -400,7 +394,7 @@ public class AdminProductService : IAdminProductService
                         IsActive = record.IsActive ?? true,
                         IsFeatured = record.IsFeatured ?? false
                     };
-                    await UpdateProductAsync(existingProduct.Id, updateDto);
+                    await UpdateProductAsync(product.Id, updateDto);
                 }
                 else
                 {
@@ -438,13 +432,19 @@ public class AdminProductService : IAdminProductService
 
     public async Task<byte[]> ExportProductsToCsvAsync(ProductFilterRequest filter)
     {
-        var products = await _productRepository.GetAllAsync(filter);
+        // Get paged products for export
+        var (products, totalCount) = await _productRepository.GetPagedAsync(
+            filter: null,
+            orderBy: null,
+            pageIndex: filter.PageNumber,
+            pageSize: filter.PageSize,
+            includeDetails: true);
         
         using var memoryStream = new MemoryStream();
         using var writer = new StreamWriter(memoryStream, Encoding.UTF8);
         using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-        var exportData = products.Items.Select(p => new ProductExportDto
+        var exportData = products.Select(p => new ProductExportDto
         {
             SKU = p.SKU,
             Name = p.Name,
@@ -453,8 +453,8 @@ public class AdminProductService : IAdminProductService
             CategoryName = p.Category?.Name,
             Price = p.Price,
             CompareAtPrice = p.CompareAtPrice,
-            Cost = p.Cost,
-            QuantityInStock = p.QuantityInStock,
+            Cost = p.CostPrice,
+            QuantityInStock = p.StockQuantity,
             Brand = p.Brand,
             IsActive = p.IsActive,
             IsFeatured = p.IsFeatured,
@@ -493,13 +493,13 @@ public class AdminProductService : IAdminProductService
                 switch (update.AdjustmentType)
                 {
                     case "set":
-                        product.QuantityInStock = update.Quantity;
+                        product.StockQuantity = update.Quantity;
                         break;
                     case "add":
-                        product.QuantityInStock += update.Quantity;
+                        product.StockQuantity += update.Quantity;
                         break;
                     case "subtract":
-                        product.QuantityInStock = Math.Max(0, product.QuantityInStock - update.Quantity);
+                        product.StockQuantity = Math.Max(0, product.StockQuantity - update.Quantity);
                         break;
                 }
 
@@ -508,10 +508,10 @@ public class AdminProductService : IAdminProductService
                 result.SuccessCount++;
 
                 // Check low stock threshold
-                if (product.QuantityInStock <= product.LowStockThreshold)
+                if (product.LowStockThreshold.HasValue && product.StockQuantity <= product.LowStockThreshold.Value)
                 {
                     _logger.LogWarning("Product {ProductId} ({SKU}) is low on stock: {Quantity} remaining", 
-                        product.Id, product.SKU, product.QuantityInStock);
+                        product.Id, product.SKU, product.StockQuantity);
                 }
             }
             catch (Exception ex)
@@ -522,19 +522,19 @@ public class AdminProductService : IAdminProductService
             }
         }
 
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.CompleteAsync();
         return result;
     }
 
-    private async Task UpdateProductImagesAsync(Guid productId, List<ProductImageDto> images)
+    private async Task UpdateProductImagesAsync(int productId, List<ProductImageDto> images)
     {
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null) return;
 
         product.Images = images.Select((img, index) => new ProductImage
         {
-            Url = img.Url,
-            Alt = img.Alt ?? product.Name,
+            ImageUrl = img.Url,
+            AltText = img.Alt ?? product.Name,
             IsPrimary = img.IsPrimary,
             DisplayOrder = img.DisplayOrder ?? index
         }).ToList();
@@ -576,27 +576,19 @@ public class AdminProductService : IAdminProductService
             SKU = product.SKU,
             Price = product.Price,
             CompareAtPrice = product.CompareAtPrice,
-            Cost = product.Cost,
-            QuantityInStock = product.QuantityInStock,
-            LowStockThreshold = product.LowStockThreshold,
+            StockQuantity = product.StockQuantity,
             CategoryId = product.CategoryId,
             CategoryName = product.Category?.Name,
             Brand = product.Brand,
-            Tags = product.Tags,
-            Weight = product.Weight,
-            Dimensions = product.Dimensions,
             Images = product.Images?.Select(i => new ProductImageDto
             {
-                Url = i.Url,
-                Alt = i.Alt,
+                Url = i.ImageUrl,
+                Alt = i.AltText,
                 IsPrimary = i.IsPrimary,
                 DisplayOrder = i.DisplayOrder
             }).ToList(),
             IsActive = product.IsActive,
             IsFeatured = product.IsFeatured,
-            MetaTitle = product.MetaTitle,
-            MetaDescription = product.MetaDescription,
-            MetaKeywords = product.MetaKeywords,
             CreatedAt = product.CreatedAt,
             UpdatedAt = product.UpdatedAt
         };

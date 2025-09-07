@@ -2,6 +2,70 @@
 
 ## Quick Status Overview
 
+### CRITICAL: Build & CI/CD Fixes (IMMEDIATE PRIORITY)
+| Issue | Status | Priority | Impact | Notes |
+|-------|--------|----------|--------|-------|
+| Backend Build Failures | 🔴 Critical | P0 | Blocking all deployments | AdminProductService type mismatches (int vs Guid) |
+| Admin Portal Build | 🔴 Critical | P0 | CI failing | Admin portal doesn't exist - needs removal from CI |
+| E2E Tests Skipped | 🟡 High | P1 | No integration testing | Dependent on backend build fix |
+| Docker Build Skipped | 🟡 High | P1 | No containerization | Dependent on backend build fix |
+| Frontend Lint Checks | ✅ Fixed | - | - | Made mandatory in CI |
+| Customer Portal Build | ✅ Fixed | - | - | TypeScript errors resolved |
+
+## Build Issue Resolution Plan
+
+### Priority 0: Backend Build Fix (AdminProductService)
+**Problem**: Type mismatches between AdminProductService and Domain models
+- Product ID types: Service expects `int`, Domain uses `Guid`
+- Missing properties: `Cost`, `QuantityInStock`, `Tags`, `Dimensions`
+- Method mismatches: `CommitAsync` vs `CompleteAsync`
+
+**Solution Options**:
+1. **Option A (Recommended)**: Update AdminProductService to match existing domain
+   - Change all `int` IDs to `Guid`
+   - Map `Cost` → `CostPrice`, `QuantityInStock` → `StockQuantity`
+   - Use existing domain properties
+   - Update method calls to match IUnitOfWork interface
+
+2. **Option B**: Temporarily disable AdminProductService
+   - Comment out the service registration
+   - Remove AdminProductController
+   - Focus on core functionality first
+
+**Action Steps**:
+```
+1. [ ] Review Product entity for actual property names
+2. [ ] Update AdminProductService DTOs to use Guid
+3. [ ] Fix property mappings in AdminProductService
+4. [ ] Update IUnitOfWork method calls
+5. [ ] Run backend build locally
+6. [ ] Run backend tests
+7. [ ] Commit fixes
+```
+
+### Priority 0: Remove Admin Portal from CI
+**Problem**: CI expects admin-portal that doesn't exist
+**Solution**: Update .github/workflows/ci.yml to remove admin portal jobs
+
+**Action Steps**:
+```
+1. [ ] Remove admin-portal build job from CI
+2. [ ] Remove admin-portal from docker-compose if present
+3. [ ] Update documentation to reflect current state
+```
+
+### Priority 1: E2E Tests
+**Problem**: E2E tests fail due to backend not building
+**Solution**: Fix backend first, then update E2E tests
+
+**Action Steps**:
+```
+1. [ ] Wait for backend build fix
+2. [ ] Update E2E test fixtures if needed
+3. [ ] Run E2E tests locally
+4. [ ] Fix any failing tests
+```
+
 ### Phase 1: MVP (Months 1-3)
 | Feature | Status | Priority | Assigned | PR # | Notes |
 |---------|--------|----------|----------|------|-------|
