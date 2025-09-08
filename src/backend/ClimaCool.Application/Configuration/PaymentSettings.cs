@@ -21,5 +21,8 @@ namespace ClimaCool.Application.Configuration
         public string ClientSecret { get; set; } = string.Empty;
         public string Mode { get; set; } = "sandbox"; // sandbox or live
         public string WebhookId { get; set; } = string.Empty;
+        public bool IsSandbox => Mode.Equals("sandbox", StringComparison.OrdinalIgnoreCase);
+        public string ReturnUrl { get; set; } = "https://localhost:4200/payment/success";
+        public string CancelUrl { get; set; } = "https://localhost:4200/payment/cancelled";
     }
 }

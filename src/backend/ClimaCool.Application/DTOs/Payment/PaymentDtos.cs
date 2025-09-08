@@ -37,7 +37,7 @@ namespace ClimaCool.Application.DTOs.Payment
         public Guid OrderId { get; set; }
         public string PaymentIntentId { get; set; } = string.Empty;
         public PaymentProvider Provider { get; set; }
-        public PaymentMethod Method { get; set; }
+        public PaymentMethodEnum Method { get; set; }
         public PaymentStatus Status { get; set; }
         public decimal Amount { get; set; }
         public string Currency { get; set; } = string.Empty;
