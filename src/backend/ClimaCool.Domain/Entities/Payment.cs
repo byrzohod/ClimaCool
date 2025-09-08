@@ -10,7 +10,7 @@ namespace ClimaCool.Domain.Entities
         
         public string PaymentIntentId { get; set; } = string.Empty;
         public PaymentProvider Provider { get; set; }
-        public PaymentMethod Method { get; set; }
+        public PaymentMethodEnum Method { get; set; }
         public PaymentStatus Status { get; set; }
         
         public decimal Amount { get; set; }

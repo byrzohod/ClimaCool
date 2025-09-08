@@ -7,7 +7,7 @@ namespace ClimaCool.Domain.Enums
         Manual = 3
     }
 
-    public enum PaymentMethod
+    public enum PaymentMethodEnum
     {
         Card = 1,
         BankTransfer = 2,
@@ -37,6 +37,17 @@ namespace ClimaCool.Domain.Enums
         Succeeded = 3,
         Failed = 4,
         Cancelled = 5
+    }
+
+    public enum PaymentMethodType
+    {
+        CreditCard = 1,
+        DebitCard = 2,
+        BankAccount = 3,
+        PayPal = 4,
+        ApplePay = 5,
+        GooglePay = 6,
+        DigitalWallet = 7
     }
 
     public enum RefundReason
