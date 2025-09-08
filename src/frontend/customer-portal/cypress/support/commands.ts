@@ -25,11 +25,6 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 // Cart-specific custom commands
-Cypress.Commands.add('addToCart', (productName: string) => {
-  cy.contains('[data-testid^="add-to-cart"]', 'Add to Cart').click();
-  cy.contains('Added to cart').should('be.visible');
-});
-
 Cypress.Commands.add('openCartSidebar', () => {
   cy.get('[data-testid="cart-icon-button"]').click();
   cy.get('[data-testid="cart-sidebar"]').should('be.visible');
@@ -37,16 +32,12 @@ Cypress.Commands.add('openCartSidebar', () => {
 
 Cypress.Commands.add('closeCartSidebar', () => {
   cy.get('[data-testid="close-cart"]').click();
-  cy.get('[data-testid="cart-sidebar"]').should('not.be.visible');
+  cy.get('[data-testid="cart-sidebar"]').should('not.exist');
 });
-
-// Import checkout commands
-import './checkout-commands';
 
 declare global {
   namespace Cypress {
     interface Chainable {
-      addToCart(productName: string): Chainable<void>;
       openCartSidebar(): Chainable<void>;
       closeCartSidebar(): Chainable<void>;
     }
