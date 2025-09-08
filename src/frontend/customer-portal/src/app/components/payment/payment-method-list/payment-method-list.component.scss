@@ -1,0 +1,222 @@
+.payment-methods {
+  .methods-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    h3 {
+      margin: 0;
+      color: #495057;
+    }
+
+    .add-method-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .methods-list {
+    .method-item {
+      background: #fff;
+      border: 2px solid #e9ecef;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        border-color: #007bff;
+        box-shadow: 0 2px 4px rgba(0, 123, 255, 0.1);
+      }
+
+      &.selected {
+        border-color: #007bff;
+        background: #f8f9ff;
+        box-shadow: 0 2px 8px rgba(0, 123, 255, 0.15);
+      }
+
+      &.default {
+        border-color: #28a745;
+        
+        .method-header::after {
+          content: 'Default';
+          background: #28a745;
+          color: white;
+          font-size: 0.75rem;
+          padding: 0.25rem 0.5rem;
+          border-radius: 12px;
+          margin-left: auto;
+        }
+      }
+
+      .method-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        .payment-icon {
+          font-size: 1.5rem;
+          margin-right: 0.75rem;
+          
+          &.visa { color: #1a1f71; }
+          &.mastercard { color: #eb001b; }
+          &.amex { color: #006fcf; }
+          &.discover { color: #ff6000; }
+          &.paypal { color: #0070ba; }
+          &.generic { color: #6c757d; }
+        }
+
+        .method-info {
+          flex-grow: 1;
+
+          .method-type {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+          }
+
+          .method-details {
+            color: #6c757d;
+            font-size: 0.9rem;
+          }
+        }
+      }
+
+      .method-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f8f9fa;
+
+        .btn-sm {
+          padding: 0.25rem 0.75rem;
+          font-size: 0.875rem;
+        }
+      }
+
+      .method-meta {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 0.5rem;
+        font-size: 0.85rem;
+        color: #6c757d;
+
+        .expiry {
+          &.expired {
+            color: #dc3545;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+
+    .no-methods {
+      text-align: center;
+      padding: 3rem;
+      color: #6c757d;
+
+      .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        color: #dee2e6;
+      }
+
+      h4 {
+        margin-bottom: 0.5rem;
+        color: #495057;
+      }
+
+      p {
+        margin-bottom: 1.5rem;
+      }
+    }
+  }
+
+  .loading {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+
+    .loading-spinner {
+      display: inline-block;
+      width: 2rem;
+      height: 2rem;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #007bff;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border: 1px solid #f5c6cb;
+
+    .error-icon {
+      margin-right: 0.5rem;
+    }
+  }
+
+  .success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    border: 1px solid #c3e6cb;
+
+    .success-icon {
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .payment-methods {
+    .methods-header {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 1rem;
+
+      .add-method-btn {
+        justify-content: center;
+      }
+    }
+
+    .methods-list .method-item {
+      .method-actions {
+        flex-wrap: wrap;
+        
+        .btn-sm {
+          flex: 1;
+          min-width: calc(50% - 0.25rem);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .payment-methods {
+    .methods-list .method-item {
+      .method-actions .btn-sm {
+        flex: 1;
+        min-width: 100%;
+      }
+    }
+  }
+}

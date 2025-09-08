@@ -32,4 +32,6 @@ public class Order : BaseEntity
     public virtual Address BillingAddress { get; set; } = null!;
     public virtual ICollection<OrderItem> Items { get; set; } = new List<OrderItem>();
     public virtual ICollection<OrderStatusHistory> StatusHistory { get; set; } = new List<OrderStatusHistory>();
+    public virtual ICollection<Payment> Payments { get; set; } = new List<Payment>();
+    public virtual ICollection<Refund> Refunds { get; set; } = new List<Refund>();
 }

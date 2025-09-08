@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using ClimaCool.Domain.Interfaces;
 using ClimaCool.Domain.Entities;
+using ClimaCool.Domain.Repositories;
 using ClimaCool.Infrastructure.Data;
 
 namespace ClimaCool.Infrastructure.Repositories;
@@ -14,6 +15,9 @@ public class UnitOfWork : IUnitOfWork
     private ICartRepository? _cartRepository;
     private IOrderRepository? _orderRepository;
     private IAddressRepository? _addressRepository;
+    private IPaymentRepository? _paymentRepository;
+    private IPaymentMethodRepository? _paymentMethodRepository;
+    private IRefundRepository? _refundRepository;
     private IDbContextTransaction? _transaction;
 
     public UnitOfWork(ApplicationDbContext context)
@@ -27,6 +31,9 @@ public class UnitOfWork : IUnitOfWork
     public ICartRepository Carts => _cartRepository ??= new CartRepository(_context);
     public IOrderRepository Orders => _orderRepository ??= new OrderRepository(_context);
     public IAddressRepository Addresses => _addressRepository ??= new AddressRepository(_context);
+    public IPaymentRepository Payments => _paymentRepository ??= new PaymentRepository(_context);
+    public IPaymentMethodRepository PaymentMethods => _paymentMethodRepository ??= new PaymentMethodRepository(_context);
+    public IRefundRepository Refunds => _refundRepository ??= new RefundRepository(_context);
 
     public async Task<int> CompleteAsync()
     {

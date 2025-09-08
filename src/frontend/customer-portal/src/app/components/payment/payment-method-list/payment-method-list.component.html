@@ -1,0 +1,131 @@
+<div class="payment-method-list" data-cy="payment-method-list">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="flex justify-center items-center py-8">
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && paymentMethods.length === 0" class="text-center py-8">
+    <svg class="mx-auto h-12 w-12 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path>
+    </svg>
+    <p class="text-gray-500 mb-4">No payment methods saved</p>
+    <button 
+      *ngIf="showAddButton"
+      (click)="onAddNewMethod()"
+      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      data-cy="add-first-payment-method"
+    >
+      Add Payment Method
+    </button>
+  </div>
+
+  <!-- Payment Methods List -->
+  <div *ngIf="!isLoading && paymentMethods.length > 0" class="space-y-3">
+    <div 
+      *ngFor="let method of paymentMethods" 
+      class="payment-method-card border rounded-lg p-4 hover:shadow-md transition-shadow"
+      [class.selected]="selectedMethodId === method.id"
+      [class.is-default]="method.isDefault"
+      data-cy="payment-method-card"
+    >
+      <div class="flex items-center justify-between">
+        <!-- Left Side: Selection and Card Info -->
+        <div class="flex items-center flex-1">
+          <!-- Radio Button for Selection -->
+          <input 
+            *ngIf="selectable"
+            type="radio"
+            [id]="'method-' + method.id"
+            name="selectedPaymentMethod"
+            [value]="method.id"
+            [checked]="selectedMethodId === method.id"
+            (change)="selectMethod(method)"
+            class="mr-3"
+            data-cy="payment-method-radio"
+          />
+          
+          <!-- Card Icon -->
+          <div class="card-icon mr-3" [ngClass]="getCardBrandClass(method.cardBrand)">
+            <img 
+              [src]="getCardBrandIcon(method.cardBrand)" 
+              [alt]="method.cardBrand || 'Card'"
+              class="w-12 h-8 object-contain"
+              onerror="this.src='assets/icons/card-generic.svg'"
+            />
+          </div>
+          
+          <!-- Card Details -->
+          <div class="flex-1">
+            <div class="flex items-center">
+              <span class="font-medium">{{ formatCardNumber(method.cardLast4 || '0000') }}</span>
+              <span class="ml-2 text-sm text-gray-500">{{ method.cardBrand }}</span>
+              <span *ngIf="method.isDefault" class="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                Default
+              </span>
+            </div>
+            <div class="text-sm text-gray-500 mt-1">
+              <span *ngIf="method.cardholderName">{{ method.cardholderName }} • </span>
+              <span>Expires {{ formatExpiryDate(method.cardExpMonth, method.cardExpYear) }}</span>
+            </div>
+            <div *ngIf="method.lastUsedAt" class="text-xs text-gray-400 mt-1">
+              Last used {{ method.lastUsedAt | date:'short' }}
+            </div>
+          </div>
+        </div>
+        
+        <!-- Right Side: Actions -->
+        <div class="flex items-center space-x-2 ml-4">
+          <!-- Set as Default Button -->
+          <button
+            *ngIf="!method.isDefault"
+            (click)="setAsDefault(method)"
+            class="text-sm text-blue-600 hover:text-blue-800 px-3 py-1 border border-blue-600 rounded hover:bg-blue-50"
+            data-cy="set-default-button"
+          >
+            Set Default
+          </button>
+          
+          <!-- Remove Button -->
+          <button
+            (click)="removeMethod(method)"
+            class="text-sm text-red-600 hover:text-red-800 px-3 py-1 border border-red-600 rounded hover:bg-red-50"
+            data-cy="remove-payment-method"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Add New Method Button -->
+    <div *ngIf="showAddButton" class="pt-4">
+      <button 
+        (click)="onAddNewMethod()"
+        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+        data-cy="add-payment-method"
+      >
+        + Add New Payment Method
+      </button>
+    </div>
+  </div>
+  
+  <!-- Refresh Button -->
+  <div class="mt-4 text-center">
+    <button 
+      (click)="refresh()"
+      class="text-sm text-gray-500 hover:text-gray-700"
+      data-cy="refresh-payment-methods"
+    >
+      <svg class="inline-block w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+      </svg>
+      Refresh
+    </button>
+  </div>
+</div>

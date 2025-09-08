@@ -32,6 +32,12 @@ public class ApplicationDbContext : DbContext
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; }
     public DbSet<Address> Addresses { get; set; }
+    public DbSet<OrderStatusHistory> OrderStatusHistory { get; set; }
+    
+    // Payments
+    public DbSet<Payment> Payments { get; set; }
+    public DbSet<PaymentMethod> PaymentMethods { get; set; }
+    public DbSet<Refund> Refunds { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -377,6 +383,91 @@ public class ApplicationDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(e => e.ProductVariantId)
                 .OnDelete(DeleteBehavior.SetNull);
+        });
+        
+        // Payment entity configuration
+        modelBuilder.Entity<Payment>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.PaymentIntentId).HasMaxLength(200);
+            entity.Property(e => e.Currency).HasMaxLength(3).IsRequired();
+            entity.Property(e => e.Amount).HasPrecision(18, 2);
+            entity.Property(e => e.CardLast4).HasMaxLength(4);
+            entity.Property(e => e.CardBrand).HasMaxLength(50);
+            entity.Property(e => e.TransactionId).HasMaxLength(200);
+            entity.Property(e => e.ReferenceNumber).HasMaxLength(100);
+            entity.Property(e => e.FailureReason).HasMaxLength(500);
+            entity.Property(e => e.Metadata).HasColumnType("jsonb");
+            
+            entity.HasOne(e => e.Order)
+                .WithMany(o => o.Payments)
+                .HasForeignKey(e => e.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            entity.HasIndex(e => e.PaymentIntentId);
+            entity.HasIndex(e => e.Status);
+        });
+        
+        // PaymentMethod entity configuration
+        modelBuilder.Entity<PaymentMethod>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.StripePaymentMethodId).HasMaxLength(200);
+            entity.Property(e => e.Type).HasMaxLength(50);
+            entity.Property(e => e.CardBrand).HasMaxLength(50);
+            entity.Property(e => e.CardLast4).HasMaxLength(4);
+            entity.Property(e => e.CardholderName).HasMaxLength(200);
+            entity.Property(e => e.BillingEmail).HasMaxLength(256);
+            entity.Property(e => e.BillingPhone).HasMaxLength(20);
+            
+            entity.HasOne(e => e.User)
+                .WithMany(u => u.PaymentMethods)
+                .HasForeignKey(e => e.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+                
+            entity.HasIndex(e => e.StripePaymentMethodId);
+            entity.HasIndex(e => new { e.UserId, e.IsDefault });
+        });
+        
+        // Refund entity configuration
+        modelBuilder.Entity<Refund>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.RefundId).HasMaxLength(200);
+            entity.Property(e => e.Amount).HasPrecision(18, 2);
+            entity.Property(e => e.Currency).HasMaxLength(3).IsRequired();
+            entity.Property(e => e.Notes).HasMaxLength(1000);
+            entity.Property(e => e.FailureReason).HasMaxLength(500);
+            
+            entity.HasOne(e => e.Payment)
+                .WithMany()
+                .HasForeignKey(e => e.PaymentId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            entity.HasOne(e => e.Order)
+                .WithMany(o => o.Refunds)
+                .HasForeignKey(e => e.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
+                
+            entity.HasOne(e => e.ProcessedByUser)
+                .WithMany()
+                .HasForeignKey(e => e.ProcessedByUserId)
+                .OnDelete(DeleteBehavior.SetNull);
+                
+            entity.HasIndex(e => e.RefundId);
+            entity.HasIndex(e => e.Status);
+        });
+        
+        // OrderStatusHistory entity configuration
+        modelBuilder.Entity<OrderStatusHistory>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Notes).HasMaxLength(500);
+            
+            entity.HasOne(e => e.Order)
+                .WithMany(o => o.StatusHistory)
+                .HasForeignKey(e => e.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
         
         // Apply global conventions

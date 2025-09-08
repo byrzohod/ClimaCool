@@ -77,16 +77,69 @@
 | Order Management | ✅ Completed | Critical | - | #TBD | Complete implementation: Backend (status tracking, history) + Frontend (dashboard, details, admin) + E2E tests |
 | Admin Product Management | ✅ Completed | Critical | - | #TBD | Complete implementation: Backend (CRUD, bulk ops, images) + Frontend (list, form, inventory) + E2E tests |
 
-### Phase 2: Enhanced (Months 4-6)
+### Phase 2: Enhanced (Months 4-6) - PAYMENT GATEWAY BREAKDOWN
+
+#### Payment Gateway Implementation Tasks (Priority Order)
+| Task | Status | Complexity | Estimated Hours | Dependencies | Notes |
+|------|--------|------------|-----------------|--------------|-------|
+| **Backend - Core Payment Infrastructure** |
+| Payment Domain Entities | ✅ Completed | Low | 2 | - | Payment, PaymentMethod, Refund entities created |
+| Payment DTOs & Enums | ✅ Completed | Low | 1 | Entities | PaymentDtos.cs, PaymentEnums.cs created |
+| Payment Repository Interface | 🟡 In Progress | Low | 2 | Entities | IPaymentRepository, IPaymentMethodRepository |
+| Payment Repository Implementation | 🔴 Not Started | Medium | 4 | Repository Interface | EF Core implementation |
+| Database Migrations | 🔴 Not Started | Low | 2 | Entities | Add payment tables to database |
+| **Backend - Stripe Integration** |
+| Stripe Service Implementation | 🔴 Not Started | High | 8 | DTOs | PaymentService with Stripe SDK |
+| Stripe Payment Intent API | 🔴 Not Started | Medium | 4 | Stripe Service | Create, confirm, capture payments |
+| Stripe Payment Methods API | 🔴 Not Started | Medium | 4 | Stripe Service | Save, list, delete cards |
+| Stripe Webhook Handler | 🔴 Not Started | Medium | 4 | Stripe Service | Handle payment events |
+| Stripe Configuration | 🔴 Not Started | Low | 1 | - | appsettings.json setup |
+| **Backend - PayPal Integration** |
+| PayPal Service Implementation | 🔴 Not Started | High | 8 | DTOs | PayPal SDK integration |
+| PayPal Orders API | 🔴 Not Started | Medium | 4 | PayPal Service | Create and capture orders |
+| PayPal Webhook Handler | 🔴 Not Started | Medium | 4 | PayPal Service | Handle PayPal events |
+| **Backend - API Layer** |
+| Payment Controller | 🔴 Not Started | Medium | 4 | Services | REST endpoints for payments |
+| Payment Method Controller | 🔴 Not Started | Low | 2 | Services | Manage saved payment methods |
+| Refund Controller | 🔴 Not Started | Low | 2 | Services | Process refunds |
+| Webhook Controller | 🔴 Not Started | Low | 2 | Services | Stripe/PayPal webhooks |
+| **Frontend - Payment Components** |
+| Payment Service (Angular) | 🔴 Not Started | Medium | 4 | - | HTTP service for payment APIs |
+| Payment Models | 🔴 Not Started | Low | 1 | - | TypeScript interfaces |
+| Stripe Elements Component | 🔴 Not Started | High | 6 | Stripe.js | Card input with Stripe Elements |
+| Payment Method List Component | 🔴 Not Started | Medium | 4 | - | Display saved cards |
+| Add Payment Method Component | 🔴 Not Started | Medium | 4 | Stripe Elements | Add new card form |
+| Payment Selection Component | 🔴 Not Started | Medium | 3 | - | Choose payment method at checkout |
+| **Frontend - Checkout Integration** |
+| Checkout Payment Step | 🔴 Not Started | High | 6 | Payment Components | Integrate into checkout flow |
+| Payment Confirmation UI | 🔴 Not Started | Low | 2 | - | Success/failure screens |
+| 3D Secure Handling | 🔴 Not Started | Medium | 4 | Stripe Elements | Handle authentication |
+| **Frontend - Order & Refunds** |
+| Order Payment Status | 🔴 Not Started | Low | 2 | - | Display payment info in orders |
+| Refund Request UI | 🔴 Not Started | Medium | 3 | - | Request refund form |
+| Admin Refund Management | 🔴 Not Started | Medium | 4 | - | Process refunds admin panel |
+| **Testing** |
+| Payment Service Unit Tests | 🔴 Not Started | Medium | 4 | Service Implementation | Mock Stripe/PayPal |
+| Repository Unit Tests | 🔴 Not Started | Low | 2 | Repository | Database tests |
+| Controller Integration Tests | 🔴 Not Started | Medium | 4 | Controllers | API endpoint tests |
+| Frontend Component Tests | 🔴 Not Started | Medium | 4 | Components | Angular component tests |
+| E2E Payment Flow Tests | 🔴 Not Started | High | 6 | All components | Full checkout with payment |
+| **Documentation & Security** |
+| API Documentation | 🔴 Not Started | Low | 2 | Controllers | Swagger docs |
+| Security Review | 🔴 Not Started | High | 4 | All components | PCI compliance check |
+| Deployment Configuration | 🔴 Not Started | Low | 2 | - | Environment variables |
+
+**Total Estimated Hours**: ~130 hours (16-20 days of focused work)
+
+#### Other Phase 2 Features
 | Feature | Status | Priority | Assigned | PR # | Notes |
 |---------|--------|----------|----------|------|-------|
-| Payment Gateway | 🔴 Not Started | High | - | - | Stripe + PayPal |
 | Inventory Management | 🔴 Not Started | High | - | - | Real-time tracking |
 | Customer Reviews | 🔴 Not Started | Medium | - | - | With moderation |
 | Wishlist | 🔴 Not Started | Medium | - | - | User feature |
 | Email Notifications | 🔴 Not Started | High | - | - | Transactional first |
 | Order Tracking | 🔴 Not Started | High | - | - | Carrier integration |
-| Returns/Refunds | 🔴 Not Started | High | - | - | Self-service |
+| Returns/Refunds | 🔴 Not Started | High | - | - | Self-service (depends on Payment Gateway) |
 
 ### Phase 3: Advanced (Months 7-9)
 | Feature | Status | Priority | Assigned | PR # | Notes |
