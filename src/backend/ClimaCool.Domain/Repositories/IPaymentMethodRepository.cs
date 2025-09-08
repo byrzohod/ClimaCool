@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ClimaCool.Domain.Entities;
+using ClimaCool.Domain.Interfaces;
 
 namespace ClimaCool.Domain.Repositories
 {
