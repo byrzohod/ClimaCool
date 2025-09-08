@@ -1,0 +1,260 @@
+<div class="refund-management">
+  <div class="refund-header">
+    <h2>Refund Management</h2>
+    <div class="header-actions">
+      <button type="button" class="btn btn-secondary" (click)="refreshData()">
+        <i class="fas fa-refresh"></i> Refresh
+      </button>
+      <button type="button" class="btn btn-primary" (click)="exportRefunds()">
+        <i class="fas fa-download"></i> Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button 
+      type="button"
+      class="tab-btn" 
+      [class.active]="activeTab === 'pending'" 
+      (click)="activeTab = 'pending'">
+      Pending Requests ({{ filteredRequests.length }})
+    </button>
+    <button 
+      type="button"
+      class="tab-btn" 
+      [class.active]="activeTab === 'processed'" 
+      (click)="activeTab = 'processed'">
+      Processed Refunds ({{ processedRefunds.length }})
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters" *ngIf="activeTab === 'pending'">
+    <div class="filter-group">
+      <label for="statusFilter">Status:</label>
+      <select id="statusFilter" [(ngModel)]="statusFilter" class="form-control">
+        <option value="all">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="dateFilter">Date Range:</label>
+      <select id="dateFilter" [(ngModel)]="dateFilter" class="form-control">
+        <option value="all">All Time</option>
+        <option value="7">Last 7 Days</option>
+        <option value="30">Last 30 Days</option>
+        <option value="90">Last 90 Days</option>
+      </select>
+    </div>
+    
+    <div class="filter-group">
+      <label for="searchTerm">Search:</label>
+      <input 
+        type="text" 
+        id="searchTerm"
+        [(ngModel)]="searchTerm" 
+        placeholder="Order number, customer email, or name"
+        class="form-control">
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    {{ successMessage }}
+    <button type="button" class="close" (click)="clearMessages()">&times;</button>
+  </div>
+  
+  <div class="alert alert-danger" *ngIf="errorMessage">
+    {{ errorMessage }}
+    <button type="button" class="close" (click)="clearMessages()">&times;</button>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-area">
+    <!-- Pending Requests Tab -->
+    <div *ngIf="activeTab === 'pending'">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Requested</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let request of filteredRequests" 
+                [class.selected]="selectedRequest?.id === request.id">
+              <td>
+                <div class="order-info">
+                  <strong>{{ request.orderNumber }}</strong>
+                  <small class="text-muted d-block">{{ request.orderId }}</small>
+                </div>
+              </td>
+              <td>
+                <div class="customer-info">
+                  <strong>{{ request.customerName }}</strong>
+                  <small class="text-muted d-block">{{ request.customerEmail }}</small>
+                </div>
+              </td>
+              <td class="amount">{{ formatAmount(request.requestedAmount) }}</td>
+              <td>
+                <div class="reason">
+                  {{ request.requestedReason }}
+                  <small *ngIf="request.requestedNotes" class="text-muted d-block">
+                    {{ request.requestedNotes }}
+                  </small>
+                </div>
+              </td>
+              <td>
+                <span class="status-badge" [class]="getStatusClass(request.status)">
+                  {{ getStatusIcon(request.status) }} {{ request.status | titlecase }}
+                </span>
+              </td>
+              <td>{{ formatDate(request.requestedAt) }}</td>
+              <td class="actions">
+                <button 
+                  type="button"
+                  class="btn btn-sm btn-outline-primary" 
+                  (click)="selectRequest(request)">
+                  <i class="fas fa-edit"></i> Process
+                </button>
+                <button 
+                  *ngIf="request.status === 'pending'"
+                  type="button"
+                  class="btn btn-sm btn-success" 
+                  (click)="approveRequest(request)">
+                  <i class="fas fa-check"></i> Approve
+                </button>
+                <button 
+                  *ngIf="request.status === 'pending'"
+                  type="button"
+                  class="btn btn-sm btn-danger" 
+                  (click)="rejectRequest(request)">
+                  <i class="fas fa-times"></i> Reject
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div *ngIf="filteredRequests.length === 0" class="no-data">
+          <p>No refund requests found matching the current filters.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Processed Refunds Tab -->
+    <div *ngIf="activeTab === 'processed'">
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Refund ID</th>
+              <th>Payment ID</th>
+              <th>Amount</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let refund of processedRefunds">
+              <td><code>{{ refund.refundId }}</code></td>
+              <td><code>{{ refund.paymentId }}</code></td>
+              <td class="amount">{{ formatAmount(refund.amount) }}</td>
+              <td>{{ refund.reason }}</td>
+              <td>
+                <span class="status-badge" [class]="getStatusClass(refund.status)">
+                  {{ getStatusIcon(refund.status) }} {{ refund.status | titlecase }}
+                </span>
+              </td>
+              <td>{{ formatDate(refund.createdAt) }}</td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div *ngIf="processedRefunds.length === 0" class="no-data">
+          <p>No processed refunds found.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Process Refund Panel -->
+  <div class="process-panel" *ngIf="selectedRequest">
+    <div class="panel-header">
+      <h3>Process Refund: {{ selectedRequest.orderNumber }}</h3>
+      <button type="button" class="btn btn-sm btn-secondary" (click)="cancelSelection()">
+        <i class="fas fa-times"></i> Cancel
+      </button>
+    </div>
+    
+    <div class="panel-body">
+      <form [formGroup]="refundForm" (ngSubmit)="processRefund()">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="refundAmount">Refund Amount *</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input 
+                type="number" 
+                id="refundAmount"
+                formControlName="amount"
+                class="form-control" 
+                step="0.01" 
+                min="0.01">
+            </div>
+            <div class="invalid-feedback" *ngIf="refundForm.get('amount')?.invalid && refundForm.get('amount')?.touched">
+              Please enter a valid amount.
+            </div>
+          </div>
+          
+          <div class="form-group col-md-6">
+            <label for="refundReason">Reason *</label>
+            <input 
+              type="text" 
+              id="refundReason"
+              formControlName="reason"
+              class="form-control">
+            <div class="invalid-feedback" *ngIf="refundForm.get('reason')?.invalid && refundForm.get('reason')?.touched">
+              Please provide a reason for the refund.
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label for="refundNotes">Notes</label>
+          <textarea 
+            id="refundNotes"
+            formControlName="notes"
+            class="form-control" 
+            rows="3"
+            placeholder="Additional notes or comments"></textarea>
+        </div>
+        
+        <div class="form-actions">
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="refundForm.invalid || isLoading">
+            <i class="fas fa-credit-card"></i>
+            <span *ngIf="!isLoading">Process Refund</span>
+            <span *ngIf="isLoading">Processing...</span>
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelSelection()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
