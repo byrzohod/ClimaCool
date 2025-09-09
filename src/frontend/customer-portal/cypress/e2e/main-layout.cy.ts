@@ -18,14 +18,15 @@ describe('Main Layout E2E Tests', () => {
   });
 
   describe('Main Content', () => {
-    it('should display welcome message', () => {
-      cy.contains('Welcome to ClimaCool').should('be.visible');
-      cy.contains('Your HVAC solutions store').should('be.visible');
+    it('should display main content area', () => {
+      // Main content is now dynamic based on route
+      cy.get('main').should('be.visible');
     });
 
-    it('should display action buttons', () => {
-      cy.contains('button', 'Shop Products').should('be.visible');
-      cy.contains('button', 'Learn More').should('be.visible');
+    it('should render router outlet content', () => {
+      // Router outlet renders the current route's component
+      cy.visit('/products');
+      cy.contains('Products').should('be.visible');
     });
   });
 
@@ -81,14 +82,14 @@ describe('Main Layout E2E Tests', () => {
       cy.viewport('iphone-x');
       cy.get('[data-testid="main-header"]').should('be.visible');
       cy.get('[data-testid="cart-icon-button"]').should('be.visible');
-      cy.contains('Welcome to ClimaCool').should('be.visible');
+      cy.get('main').should('be.visible');
     });
 
     it('should display properly on tablet', () => {
       cy.viewport('ipad-2');
       cy.get('[data-testid="main-header"]').should('be.visible');
       cy.get('[data-testid="cart-icon-button"]').should('be.visible');
-      cy.contains('Welcome to ClimaCool').should('be.visible');
+      cy.get('main').should('be.visible');
     });
   });
 });
