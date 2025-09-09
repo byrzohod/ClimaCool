@@ -71,7 +71,7 @@ namespace ClimaCool.Tests.Services
                 .ReturnsAsync(user);
 
             _mockUnitOfWork.Setup(x => x.Payments.AddAsync(It.IsAny<Payment>()))
-                .Returns(Task.CompletedTask);
+                .ReturnsAsync((Payment p) => p);
 
             _mockUnitOfWork.Setup(x => x.CompleteAsync())
                 .ReturnsAsync(1);
@@ -84,7 +84,7 @@ namespace ClimaCool.Tests.Services
         }
 
         [Fact]
-        public async Task GetPaymentByIdAsync_ExistingPayment_ReturnsPaymentDto()
+        public async Task GetPaymentAsync_ExistingPayment_ReturnsPaymentDto()
         {
             // Arrange
             var paymentId = Guid.NewGuid();
@@ -106,7 +106,7 @@ namespace ClimaCool.Tests.Services
                 .ReturnsAsync(payment);
 
             // Act
-            var result = await _service.GetPaymentByIdAsync(paymentId);
+            var result = await _service.GetPaymentAsync(paymentId);
 
             // Assert
             Assert.NotNull(result);
@@ -116,7 +116,7 @@ namespace ClimaCool.Tests.Services
         }
 
         [Fact]
-        public async Task GetPaymentByIdAsync_NonExistingPayment_ReturnsNull()
+        public async Task GetPaymentAsync_NonExistingPayment_ReturnsNull()
         {
             // Arrange
             var paymentId = Guid.NewGuid();
@@ -124,14 +124,14 @@ namespace ClimaCool.Tests.Services
                 .ReturnsAsync((Payment)null);
 
             // Act
-            var result = await _service.GetPaymentByIdAsync(paymentId);
+            var result = await _service.GetPaymentAsync(paymentId);
 
             // Assert
             Assert.Null(result);
         }
 
         [Fact]
-        public async Task GetPaymentsByOrderIdAsync_ReturnsPaymentsList()
+        public async Task GetOrderPaymentsAsync_ReturnsPaymentsList()
         {
             // Arrange
             var orderId = Guid.NewGuid();
@@ -165,7 +165,7 @@ namespace ClimaCool.Tests.Services
                 .ReturnsAsync(payments);
 
             // Act
-            var result = await _service.GetPaymentsByOrderIdAsync(orderId);
+            var result = await _service.GetOrderPaymentsAsync(orderId);
 
             // Assert
             Assert.NotNull(result);
@@ -205,7 +205,7 @@ namespace ClimaCool.Tests.Services
                 .ReturnsAsync(payment);
 
             _mockUnitOfWork.Setup(x => x.Refunds.AddAsync(It.IsAny<Refund>()))
-                .Returns(Task.CompletedTask);
+                .ReturnsAsync((Refund r) => r);
 
             _mockUnitOfWork.Setup(x => x.CompleteAsync())
                 .ReturnsAsync(1);
@@ -326,14 +326,14 @@ namespace ClimaCool.Tests.Services
         }
 
         [Fact]
-        public void ProcessPayPalWebhookAsync_ThrowsNotImplementedException()
+        public async Task ProcessPayPalWebhookAsync_ThrowsNotImplementedException()
         {
             // Arrange
             var payload = "test_payload";
             var signature = "test_signature";
 
             // Act & Assert
-            Assert.ThrowsAsync<NotImplementedException>(async () =>
+            await Assert.ThrowsAsync<NotImplementedException>(async () =>
                 await _service.ProcessPayPalWebhookAsync(payload, signature));
         }
     }

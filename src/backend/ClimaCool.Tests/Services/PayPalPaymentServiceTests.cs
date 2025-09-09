@@ -41,7 +41,7 @@ namespace ClimaCool.Tests.Services
                 {
                     ClientId = "test_client_id",
                     ClientSecret = "test_client_secret",
-                    IsSandbox = true,
+                    Mode = "sandbox",
                     ReturnUrl = "https://test.com/return",
                     CancelUrl = "https://test.com/cancel"
                 }
@@ -61,7 +61,7 @@ namespace ClimaCool.Tests.Services
                 _mockUnitOfWork.Object,
                 _mockPaymentSettings.Object,
                 _mockLogger.Object,
-                _mockHttpClientFactory.Object
+                httpClient
             );
         }
 
@@ -91,7 +91,7 @@ namespace ClimaCool.Tests.Services
             SetupHttpResponse(HttpStatusCode.OK, orderResponse);
 
             _mockUnitOfWork.Setup(x => x.Payments.AddAsync(It.IsAny<Payment>()))
-                .Returns(Task.CompletedTask);
+                .ReturnsAsync((Payment p) => p);
             _mockUnitOfWork.Setup(x => x.CompleteAsync())
                 .ReturnsAsync(1);
 
@@ -184,7 +184,7 @@ namespace ClimaCool.Tests.Services
             _mockUnitOfWork.Setup(x => x.Payments.GetByIdAsync(paymentId))
                 .ReturnsAsync(payment);
             _mockUnitOfWork.Setup(x => x.Refunds.AddAsync(It.IsAny<Refund>()))
-                .Returns(Task.CompletedTask);
+                .ReturnsAsync((Refund r) => r);
             _mockUnitOfWork.Setup(x => x.CompleteAsync())
                 .ReturnsAsync(1);
 
