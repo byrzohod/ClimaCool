@@ -1,9 +1,11 @@
 import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router } from '@angular/router';
 
 export const routes: Routes = [
   {
     path: 'products',
-    loadComponent: () => import('./features/products/components/product-list/product-list.component').then(m => m.ProductListComponent)
+    loadComponent: () => import('./features/products/components/product-list/product-list-simple.component').then(m => m.ProductListSimpleComponent)
   },
   {
     path: 'cart',
@@ -11,7 +13,16 @@ export const routes: Routes = [
   },
   {
     path: 'checkout',
-    loadComponent: () => import('./features/checkout/components/checkout.component').then(m => m.CheckoutComponent)
+    loadComponent: () => import('./features/checkout/components/checkout.component').then(m => m.CheckoutComponent),
+    canActivate: [() => {
+      const router = inject(Router);
+      const token = localStorage.getItem('access_token');
+      if (!token) {
+        router.navigate(['/auth/login']);
+        return false;
+      }
+      return true;
+    }]
   },
   {
     path: 'orders',

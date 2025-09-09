@@ -198,6 +198,397 @@
 2. **feature/wishlist** - Save for later
 3. **feature/loyalty-program** - Points and rewards
 
+## Comprehensive E2E Test Plan
+
+### Test Coverage Status
+| Test Suite | Status | Priority | Coverage | Notes |
+|------------|--------|----------|----------|-------|
+| Authentication | 🔴 Not Started | P0 | 0% | Critical user flows |
+| Product Browsing | 🔴 Not Started | P0 | 0% | Core shopping experience |
+| Shopping Cart | 🟡 Partial | P0 | 30% | Basic UI tests exist |
+| Checkout Process | 🔴 Not Started | P0 | 0% | Critical purchase flow |
+| Order Management | 🔴 Not Started | P1 | 0% | Post-purchase experience |
+| Admin Product Management | 🔴 Not Started | P1 | 0% | Admin workflows |
+| Payment Flow | 🔴 Not Started | P0 | 0% | Payment processing |
+| Search & Filtering | 🔴 Not Started | P1 | 0% | Product discovery |
+
+### Detailed E2E Test Scenarios
+
+#### 1. Authentication Test Suite (`auth.e2e.cy.ts`)
+**Priority: P0 - Critical**
+
+##### User Registration Journey
+- ✅ Navigate to registration page
+- ✅ Fill valid registration form
+- ✅ Submit and verify success message
+- ✅ Verify email sent notification
+- ✅ Check user redirected to login
+- ✅ Verify account created in database
+- ✅ Test password strength requirements
+- ✅ Test duplicate email rejection
+- ✅ Test form validation errors
+
+##### User Login Journey
+- ✅ Navigate to login page
+- ✅ Enter valid credentials
+- ✅ Verify successful login redirect
+- ✅ Check JWT token storage
+- ✅ Verify user menu appears
+- ✅ Test invalid credentials error
+- ✅ Test remember me functionality
+- ✅ Test session persistence
+
+##### Password Reset Journey
+- ✅ Click forgot password link
+- ✅ Enter registered email
+- ✅ Verify reset email sent message
+- ✅ Navigate to reset link (mock)
+- ✅ Enter new password
+- ✅ Verify password changed
+- ✅ Login with new password
+
+##### Logout Journey
+- ✅ Click logout from user menu
+- ✅ Verify redirect to home
+- ✅ Check token cleared
+- ✅ Verify protected routes blocked
+
+#### 2. Product Browsing Test Suite (`product-browsing.e2e.cy.ts`)
+**Priority: P0 - Critical**
+
+##### Product Catalog Journey
+- ✅ Navigate to products page
+- ✅ Verify products load
+- ✅ Check product cards display correctly
+- ✅ Verify pagination works
+- ✅ Test sorting (price, name, rating)
+- ✅ Verify category navigation
+- ✅ Check product images load
+- ✅ Test grid/list view toggle
+
+##### Product Details Journey
+- ✅ Click on product card
+- ✅ Verify product details page loads
+- ✅ Check all product information displays
+- ✅ Verify image gallery works
+- ✅ Test variant selection (size, color)
+- ✅ Check stock availability display
+- ✅ Verify price updates with variants
+- ✅ Test product specifications tab
+
+#### 3. Shopping Cart Test Suite (`shopping-cart-full.e2e.cy.ts`)
+**Priority: P0 - Critical**
+
+##### Add to Cart Journey
+- ✅ Browse to product
+- ✅ Select product variant
+- ✅ Add to cart
+- ✅ Verify cart icon updates
+- ✅ Check cart sidebar opens
+- ✅ Verify product in cart
+- ✅ Test quantity limits
+- ✅ Verify cart persistence
+
+##### Cart Management Journey
+- ✅ Open cart sidebar
+- ✅ Update item quantity
+- ✅ Verify price recalculation
+- ✅ Remove item from cart
+- ✅ Verify cart updates
+- ✅ Test empty cart state
+- ✅ Apply discount code
+- ✅ Verify discount applied
+
+##### Cart Page Journey
+- ✅ Navigate to cart page
+- ✅ Verify all items display
+- ✅ Test bulk quantity update
+- ✅ Verify subtotal calculation
+- ✅ Check shipping estimate
+- ✅ Test save for later
+- ✅ Verify cart summary
+- ✅ Proceed to checkout button
+
+#### 4. Checkout Process Test Suite (`checkout.e2e.cy.ts`)
+**Priority: P0 - Critical**
+
+##### Guest Checkout Journey
+- ✅ Add items to cart
+- ✅ Proceed to checkout
+- ✅ Enter email for guest checkout
+- ✅ Fill shipping address
+- ✅ Select shipping method
+- ✅ Enter payment details
+- ✅ Review order summary
+- ✅ Place order
+- ✅ Verify confirmation page
+- ✅ Check order confirmation email
+
+##### Registered User Checkout Journey
+- ✅ Login first
+- ✅ Add items to cart
+- ✅ Proceed to checkout
+- ✅ Select saved address
+- ✅ Add new address option
+- ✅ Select saved payment method
+- ✅ Apply loyalty points
+- ✅ Review and place order
+- ✅ Verify order in account
+
+##### Multi-Step Checkout Validation
+- ✅ Test step navigation
+- ✅ Verify step completion
+- ✅ Test back button behavior
+- ✅ Verify form persistence
+- ✅ Test validation on each step
+- ✅ Check step indicators
+- ✅ Test direct step access
+
+#### 5. Order Management Test Suite (`order-management.e2e.cy.ts`)
+**Priority: P1 - High**
+
+##### Order History Journey
+- ✅ Login to account
+- ✅ Navigate to orders page
+- ✅ Verify orders list displays
+- ✅ Check order filtering (status, date)
+- ✅ Test order search
+- ✅ Verify pagination
+- ✅ Check order status badges
+
+##### Order Details Journey
+- ✅ Click on order number
+- ✅ Verify order details load
+- ✅ Check all order information
+- ✅ Verify line items display
+- ✅ Check shipping information
+- ✅ Verify payment details
+- ✅ Test invoice download
+- ✅ Check tracking information
+
+##### Order Actions Journey
+- ✅ Test reorder functionality
+- ✅ Verify items added to cart
+- ✅ Test cancel order (if pending)
+- ✅ Verify cancellation confirmation
+- ✅ Test return request
+- ✅ Fill return reason
+- ✅ Verify return initiated
+
+#### 6. Admin Product Management Test Suite (`admin-products.e2e.cy.ts`)
+**Priority: P1 - High**
+
+##### Admin Login Journey
+- ✅ Navigate to admin login
+- ✅ Enter admin credentials
+- ✅ Verify admin dashboard access
+- ✅ Check admin menu items
+- ✅ Verify role-based access
+
+##### Product Creation Journey
+- ✅ Navigate to add product
+- ✅ Fill product basic info
+- ✅ Add product images
+- ✅ Set pricing and inventory
+- ✅ Add product variants
+- ✅ Set categories and tags
+- ✅ Configure shipping
+- ✅ Save and verify product created
+- ✅ Check product appears in catalog
+
+##### Product Editing Journey
+- ✅ Navigate to products list
+- ✅ Search for product
+- ✅ Click edit product
+- ✅ Update product details
+- ✅ Change images
+- ✅ Update inventory
+- ✅ Save changes
+- ✅ Verify updates reflected
+
+##### Bulk Operations Journey
+- ✅ Select multiple products
+- ✅ Test bulk price update
+- ✅ Test bulk category change
+- ✅ Test bulk delete
+- ✅ Verify confirmation dialog
+- ✅ Check operations completed
+
+##### Inventory Management Journey
+- ✅ Navigate to inventory page
+- ✅ Check stock levels display
+- ✅ Test low stock filter
+- ✅ Update stock quantity
+- ✅ Test stock history
+- ✅ Set reorder points
+- ✅ Verify stock alerts
+
+#### 7. Payment Flow Test Suite (`payment-flow-full.e2e.cy.ts`)
+**Priority: P0 - Critical**
+
+##### Credit Card Payment Journey
+- ✅ Reach payment step in checkout
+- ✅ Select credit card option
+- ✅ Enter card details (test card)
+- ✅ Verify card validation
+- ✅ Submit payment
+- ✅ Handle 3D Secure (mock)
+- ✅ Verify payment success
+- ✅ Check order confirmation
+
+##### Saved Payment Method Journey
+- ✅ Login with saved cards
+- ✅ Select saved payment method
+- ✅ Enter CVV only
+- ✅ Process payment
+- ✅ Verify payment success
+
+##### Payment Method Management
+- ✅ Navigate to payment methods
+- ✅ Add new payment method
+- ✅ Verify card saved
+- ✅ Set default payment method
+- ✅ Remove payment method
+- ✅ Verify removal confirmation
+
+##### Payment Failure Scenarios
+- ✅ Test declined card
+- ✅ Verify error message
+- ✅ Test retry payment
+- ✅ Test insufficient funds
+- ✅ Verify order not created
+
+#### 8. Search & Filtering Test Suite (`search-filtering.e2e.cy.ts`)
+**Priority: P1 - High**
+
+##### Search Journey
+- ✅ Enter search term
+- ✅ Verify search results
+- ✅ Check result relevance
+- ✅ Test search suggestions
+- ✅ Test search history
+- ✅ Test no results state
+- ✅ Test special characters
+- ✅ Test search pagination
+
+##### Category Filtering Journey
+- ✅ Select category
+- ✅ Verify products filtered
+- ✅ Check breadcrumbs
+- ✅ Test subcategories
+- ✅ Test multiple categories
+- ✅ Verify category counts
+
+##### Advanced Filtering Journey
+- ✅ Apply price range filter
+- ✅ Select brand filters
+- ✅ Choose size options
+- ✅ Select color filters
+- ✅ Apply rating filter
+- ✅ Test filter combinations
+- ✅ Verify filter tags
+- ✅ Test clear all filters
+
+##### Sort and Display Options
+- ✅ Test sort by price
+- ✅ Test sort by popularity
+- ✅ Test sort by rating
+- ✅ Test sort by newest
+- ✅ Change items per page
+- ✅ Test view mode toggle
+
+### Test Data Management
+
+#### Required Test Data Sets
+1. **Users**
+   - Regular user account
+   - Admin user account
+   - Guest checkout data
+   - Multiple test addresses
+   - Test payment methods
+
+2. **Products**
+   - Simple products (10+)
+   - Variable products (5+)
+   - Out of stock products
+   - Sale products
+   - Different categories
+
+3. **Orders**
+   - Completed orders
+   - Pending orders
+   - Cancelled orders
+   - Refunded orders
+
+#### Database Seeding Strategy
+```javascript
+// cypress/support/commands.js
+Cypress.Commands.add('seedDatabase', () => {
+  cy.task('db:seed');
+});
+
+Cypress.Commands.add('cleanDatabase', () => {
+  cy.task('db:clean');
+});
+
+Cypress.Commands.add('createTestUser', (userData) => {
+  cy.task('db:createUser', userData);
+});
+
+Cypress.Commands.add('createTestProducts', (count) => {
+  cy.task('db:createProducts', count);
+});
+```
+
+### Test Execution Strategy
+
+#### Execution Order
+1. **Smoke Tests** - Critical paths only (5 min)
+2. **Authentication** - Must pass before others (10 min)
+3. **Core Shopping** - Products, Cart, Checkout (20 min)
+4. **Extended Features** - Orders, Admin, Search (15 min)
+5. **Payment Tests** - Isolated payment flows (10 min)
+
+#### Parallel Execution Groups
+```javascript
+// cypress.config.js
+{
+  "groups": {
+    "auth": ["auth.e2e.cy.ts"],
+    "shopping": ["product-browsing.e2e.cy.ts", "shopping-cart-full.e2e.cy.ts"],
+    "checkout": ["checkout.e2e.cy.ts", "payment-flow-full.e2e.cy.ts"],
+    "account": ["order-management.e2e.cy.ts"],
+    "admin": ["admin-products.e2e.cy.ts"],
+    "search": ["search-filtering.e2e.cy.ts"]
+  }
+}
+```
+
+#### CI/CD Integration
+```yaml
+# .github/workflows/e2e-tests.yml
+e2e-tests:
+  runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      group: [auth, shopping, checkout, account, admin, search]
+  steps:
+    - name: Run E2E Tests - ${{ matrix.group }}
+      run: npm run cy:run -- --group ${{ matrix.group }}
+```
+
+### Success Metrics
+- **Coverage Target**: 80% of critical user journeys
+- **Execution Time**: < 60 minutes for full suite
+- **Stability**: < 1% flaky test rate
+- **Maintenance**: < 2 hours/week for updates
+
+### Implementation Priority
+1. **Week 1**: Authentication + Product Browsing
+2. **Week 2**: Shopping Cart + Checkout
+3. **Week 3**: Payment Flow + Order Management
+4. **Week 4**: Admin Features + Search/Filtering
+
 ## Feature Dependencies
 
 ```mermaid
