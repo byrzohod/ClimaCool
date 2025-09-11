@@ -15,11 +15,12 @@ namespace ClimaCool.Tests.Helpers
         {
             builder.ConfigureServices(services =>
             {
-                // Remove the existing DbContext registration
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                // Remove ALL existing DbContext-related registrations
+                var descriptorsToRemove = services.Where(
+                    d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
+                         d.ServiceType == typeof(ApplicationDbContext)).ToList();
 
-                if (descriptor != null)
+                foreach (var descriptor in descriptorsToRemove)
                 {
                     services.Remove(descriptor);
                 }
@@ -28,10 +29,11 @@ namespace ClimaCool.Tests.Helpers
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
                     options.UseInMemoryDatabase($"InMemoryDbForTesting_{Guid.NewGuid()}");
+                    options.UseInternalServiceProvider(null); // Clear any existing service provider
                 });
 
                 // Build the service provider
-                var sp = services.BuildServiceProvider();
+                var sp = services.BuildServiceProvider()
 
                 // Create a scope to obtain a reference to the database context
                 using (var scope = sp.CreateScope())
