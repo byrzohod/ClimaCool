@@ -33,7 +33,7 @@ namespace ClimaCool.Tests.Helpers
                 });
 
                 // Build the service provider
-                var sp = services.BuildServiceProvider()
+                var sp = services.BuildServiceProvider();
 
                 // Create a scope to obtain a reference to the database context
                 using (var scope = sp.CreateScope())
