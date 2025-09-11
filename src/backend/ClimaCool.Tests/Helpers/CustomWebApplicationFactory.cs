@@ -15,10 +15,13 @@ namespace ClimaCool.Tests.Helpers
         {
             builder.ConfigureServices(services =>
             {
-                // Remove ALL existing DbContext-related registrations
-                var descriptorsToRemove = services.Where(
-                    d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
-                         d.ServiceType == typeof(ApplicationDbContext)).ToList();
+                // Remove ALL existing DbContext-related registrations to avoid conflicts
+                var descriptorsToRemove = services.Where(d =>
+                    d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
+                    d.ServiceType == typeof(DbContextOptions) ||
+                    d.ServiceType == typeof(ApplicationDbContext) ||
+                    d.ServiceType.Name.Contains("DbContext") ||
+                    d.ServiceType.Name.Contains("EntityFramework")).ToList();
 
                 foreach (var descriptor in descriptorsToRemove)
                 {
@@ -29,7 +32,6 @@ namespace ClimaCool.Tests.Helpers
                 services.AddDbContext<ApplicationDbContext>(options =>
                 {
                     options.UseInMemoryDatabase($"InMemoryDbForTesting_{Guid.NewGuid()}");
-                    options.UseInternalServiceProvider(null); // Clear any existing service provider
                 });
 
                 // Build the service provider
