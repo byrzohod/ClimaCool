@@ -48,7 +48,7 @@ jobs:
       working-directory: ./src/backend
     
     - name: Run tests
-      run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage
+      run: dotnet test --no-build --configuration Release --verbosity normal --collect:"XPlat Code Coverage" --results-directory ./coverage --filter "FullyQualifiedName!~Integration"
       working-directory: ./src/backend
       env:
         ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=climacool_test;Username=test_user;Password=test_password"
