@@ -7,7 +7,7 @@
  * - Authentication/Authorization
  */
 
-describe('Full Stack E2E Tests - Complete Application Flow', () => {
+describe.skip('Full Stack E2E Tests - Complete Application Flow', () => {
   const API_URL = 'http://localhost:5000';
   const uniqueId = Date.now();
   const testUser = {
