@@ -227,7 +227,7 @@ export class PaymentService {
   }
 
   // Stripe Elements Methods
-  async createCardElement(elementId: string): Promise<StripeCardElement | null> {
+  async createCardElement(elementId?: string): Promise<StripeCardElement | null> {
     if (!this.stripe) {
       await this.initializeStripe();
     }
@@ -257,9 +257,11 @@ export class PaymentService {
 
     this.cardElement = this.elements.create('card', { style });
     
-    const element = document.getElementById(elementId);
-    if (element) {
-      this.cardElement.mount(`#${elementId}`);
+    if (elementId) {
+      const element = document.getElementById(elementId);
+      if (element) {
+        this.cardElement.mount(`#${elementId}`);
+      }
     }
 
     return this.cardElement;
