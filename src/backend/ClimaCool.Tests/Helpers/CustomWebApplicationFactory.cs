@@ -15,11 +15,15 @@ namespace ClimaCool.Tests.Helpers
         {
             builder.ConfigureServices(services =>
             {
-                // Remove the existing DbContext registration
-                var descriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>));
+                // Remove ALL existing DbContext-related registrations to avoid conflicts
+                var descriptorsToRemove = services.Where(d =>
+                    d.ServiceType == typeof(DbContextOptions<ApplicationDbContext>) ||
+                    d.ServiceType == typeof(DbContextOptions) ||
+                    d.ServiceType == typeof(ApplicationDbContext) ||
+                    d.ServiceType.Name.Contains("DbContext") ||
+                    d.ServiceType.Name.Contains("EntityFramework")).ToList();
 
-                if (descriptor != null)
+                foreach (var descriptor in descriptorsToRemove)
                 {
                     services.Remove(descriptor);
                 }

@@ -33,7 +33,7 @@ namespace ClimaCool.Tests.Integration
         {
             var loginRequest = new LoginRequestDto
             {
-                Email = "testuser@example.com",
+                EmailOrUsername = "testuser@example.com",
                 Password = "Test123!@#"
             };
 
@@ -56,12 +56,12 @@ namespace ClimaCool.Tests.Integration
             }
 
             var content = await response.Content.ReadAsStringAsync();
-            var loginResponse = JsonSerializer.Deserialize<LoginResponseDto>(content, new JsonSerializerOptions
+            var loginResponse = JsonSerializer.Deserialize<AuthResponseDto>(content, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
 
-            return loginResponse?.AccessToken ?? string.Empty;
+            return loginResponse?.Token ?? string.Empty;
         }
 
         [Fact]

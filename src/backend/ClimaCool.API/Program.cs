@@ -63,8 +63,16 @@ builder.Services.AddSwaggerGen(c =>
 
 // Configure Entity Framework
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("ClimaCool.Infrastructure")));
+        b => b.MigrationsAssembly("ClimaCool.Infrastructure"));
+    
+    // Suppress pending migration warnings in CI/Test environments
+    if (builder.Environment.IsDevelopment() || builder.Environment.EnvironmentName == "Testing")
+    {
+        options.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
+    }
+});
 
 // Configure JWT Authentication
 var jwtSection = builder.Configuration.GetSection("JWT");
